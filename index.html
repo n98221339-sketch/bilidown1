@@ -6,931 +6,740 @@
 <title>BiliDown — Tải Video Bilibili & Douyin</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --panel: #111118;
-    --border: #1e1e2e;
-    --accent: #00e5ff;
-    --accent2: #ff3d6b;
-    --accent3: #7b61ff;
-    --text: #e0e0f0;
-    --muted: #555570;
-    --success: #00e676;
-    --warn: #ffb300;
-    --card: #14141f;
-    --card-hover: #1a1a2a;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  /* Background grid */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+:root{--bg:#0a0a0f;--panel:#111118;--border:#1e1e2e;--accent:#00e5ff;--a2:#ff3d6b;--a3:#7b61ff;--green:#00e676;--warn:#ffb300;--text:#e0e0f0;--muted:#555570;--card:#14141f;--ch:#1a1a2a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.w{max-width:1060px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
 
-  .container { max-width: 980px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+/* HEADER */
+header{padding:18px 0 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--a3));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+header h1{font-size:18px;letter-spacing:2px;color:var(--accent)}
+header p{font-size:9px;color:var(--muted);margin-top:2px;font-family:'Noto Sans SC',sans-serif}
+.htags{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ptag{padding:2px 8px;border-radius:4px;font-size:8px;letter-spacing:1px;border:1px solid}
+.ptag.bili{color:#00b5e2;border-color:#00b5e2;background:rgba(0,181,226,0.08)}
+.ptag.dy{color:var(--a2);border-color:var(--a2);background:rgba(255,61,107,0.08)}
+.api-dot{font-size:8px;padding:2px 9px;border-radius:10px;border:1px solid var(--border);color:var(--muted)}
+.api-dot.ok{color:var(--green);border-color:var(--green)}
+.api-dot.err{color:var(--a2);border-color:var(--a2)}
+.api-dot.chk{color:var(--warn);border-color:var(--warn)}
 
-  /* HEADER */
-  header {
-    padding: 28px 0 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .logo-icon {
-    width: 42px; height: 42px;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-  }
-  header h1 { font-size: 22px; letter-spacing: 2px; color: var(--accent); }
-  header p { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'Noto Sans SC', sans-serif; }
-  .platform-tags { margin-left: auto; display: flex; gap: 8px; }
-  .ptag {
-    padding: 4px 10px; border-radius: 4px; font-size: 10px; letter-spacing: 1px;
-    border: 1px solid;
-  }
-  .ptag.bili { color: #00b5e2; border-color: #00b5e2; background: rgba(0,181,226,0.08); }
-  .ptag.dy { color: var(--accent2); border-color: var(--accent2); background: rgba(255,61,107,0.08); }
+/* TABS */
+.tabs{display:flex;margin:16px 0 0;border-bottom:1px solid var(--border)}
+.tab{padding:8px 16px;font-size:10px;letter-spacing:1px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'Space Mono',monospace}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+.tbadge{background:var(--a3);color:#fff;border-radius:8px;font-size:8px;padding:1px 5px;margin-left:4px}
+.tab-pane{display:none;padding:16px 0}
+.tab-pane.active{display:block}
 
-  /* TABS */
-  .tabs { display: flex; gap: 0; margin: 24px 0 0; border-bottom: 1px solid var(--border); }
-  .tab {
-    padding: 10px 20px; font-size: 12px; letter-spacing: 1px; cursor: pointer;
-    color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.2s;
-    background: none; border-top: none; border-left: none; border-right: none; font-family: 'Space Mono', monospace;
-  }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab:hover:not(.active) { color: var(--text); }
+/* CARD */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:12px}
+.clabel{font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px;display:block}
 
-  /* TAB CONTENT */
-  .tab-content { display: none; padding: 20px 0; }
-  .tab-content.active { display: block; }
+/* INPUTS */
+textarea,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:11px;border-radius:5px;padding:9px 11px;resize:vertical;outline:none;transition:border-color .2s}
+textarea{height:96px}
+textarea:focus,input:focus{border-color:var(--accent)}
 
-  /* INPUT AREA */
-  .input-section {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    margin-bottom: 18px;
-  }
-  .input-section label { font-size: 11px; color: var(--muted); letter-spacing: 1px; display: block; margin-bottom: 8px; }
-  .input-section textarea, .input-section input[type=text] {
-    width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
-    font-family: 'Space Mono', monospace; font-size: 12px; border-radius: 6px;
-    padding: 10px 12px; resize: vertical; outline: none; transition: border-color 0.2s;
-  }
-  textarea { height: 110px; }
-  .input-section textarea:focus, .input-section input:focus { border-color: var(--accent); }
-  .hint { font-size: 10px; color: var(--muted); margin-top: 6px; font-family: 'Noto Sans SC', sans-serif; }
-  .hint span { color: var(--accent2); }
+/* NOTICE BOXES */
+.notice{background:rgba(255,179,0,0.05);border:1px solid rgba(255,179,0,0.2);border-radius:7px;padding:9px 13px;font-size:10px;color:var(--warn);margin-bottom:12px;line-height:1.7;font-family:'Noto Sans SC',sans-serif}
+.info-box{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.15);border-radius:7px;padding:9px 13px;font-size:10px;color:var(--accent);margin-bottom:12px;line-height:1.7;font-family:'Noto Sans SC',sans-serif}
+.info-box b{font-family:'Space Mono',monospace}
 
-  /* OPTIONS ROW */
-  .options-row {
-    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
-    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
-    padding: 14px 18px; margin-bottom: 18px;
-  }
-  .opt-group { display: flex; flex-direction: column; gap: 5px; min-width: 130px; }
-  .opt-group label { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
-  select {
-    background: var(--bg); border: 1px solid var(--border); color: var(--text);
-    font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 10px; border-radius: 5px;
-    outline: none; cursor: pointer;
-  }
-  select:focus { border-color: var(--accent); }
+/* OPTIONS */
+.opts{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.og{display:flex;flex-direction:column;gap:4px}
+.og label{font-size:9px;color:var(--muted);letter-spacing:1px}
+select{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;border-radius:4px;outline:none;cursor:pointer}
+select:focus{border-color:var(--accent)}
 
-  .checkbox-group { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
-  .checkbox-group input { display: none; }
-  .custom-check {
-    width: 16px; height: 16px; border: 1px solid var(--muted); border-radius: 3px;
-    display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
-  }
-  .checkbox-group input:checked + .custom-check {
-    background: var(--accent); border-color: var(--accent);
-  }
-  .custom-check::after { content: '✓'; font-size: 10px; color: var(--bg); display: none; }
-  .checkbox-group input:checked + .custom-check::after { display: block; }
-  .checkbox-group span { font-size: 11px; color: var(--text); }
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:5px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.5px;cursor:pointer;border:none;transition:all .16s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.bp{background:var(--accent);color:var(--bg);font-weight:700}
+.bp:hover{background:#33eeff;transform:translateY(-1px)}
+.bv{background:rgba(0,229,255,0.1);color:var(--accent);border:1px solid var(--accent)}
+.bv:hover{background:rgba(0,229,255,0.2)}
+.ba{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid var(--green)}
+.ba:hover{background:rgba(0,230,118,0.2)}
+.bi{background:rgba(123,97,255,0.1);color:var(--a3);border:1px solid var(--a3)}
+.byt{background:rgba(255,179,0,0.1);color:var(--warn);border:1px solid var(--warn)}
+.byt:hover{background:rgba(255,179,0,0.2)}
+.byta{background:rgba(255,100,0,0.1);color:#ff8c00;border:1px solid #ff8c00}
+.byta:hover{background:rgba(255,100,0,0.2)}
+.bi:hover{background:rgba(123,97,255,0.2)}
+.bs{background:transparent;color:var(--text);border:1px solid var(--border)}
+.bs:hover{border-color:var(--text)}
+.bd{background:transparent;color:var(--a2);border:1px solid var(--a2)}
+.bd:hover{background:rgba(255,61,107,0.08)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
+.sm{padding:4px 9px;font-size:9px;border-radius:4px}
 
-  /* BUTTONS */
-  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn {
-    padding: 10px 20px; border-radius: 6px; font-family: 'Space Mono', monospace;
-    font-size: 12px; letter-spacing: 1px; cursor: pointer; border: none; transition: all 0.2s;
-    display: flex; align-items: center; gap: 7px;
-  }
-  .btn-primary {
-    background: var(--accent); color: var(--bg); font-weight: 700;
-  }
-  .btn-primary:hover { background: #33eeff; transform: translateY(-1px); }
-  .btn-secondary {
-    background: transparent; color: var(--text); border: 1px solid var(--border);
-  }
-  .btn-secondary:hover { border-color: var(--text); }
-  .btn-danger { background: transparent; color: var(--accent2); border: 1px solid var(--accent2); }
-  .btn-danger:hover { background: rgba(255,61,107,0.1); }
-  .btn:active { transform: scale(0.97); }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+/* STATS */
+.stats{display:flex;gap:14px;padding:6px 0;margin-bottom:10px;font-size:9px;flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:4px}
+.dot{width:5px;height:5px;border-radius:50%}
+.da{background:var(--muted)}.ds{background:var(--accent)}.dd{background:var(--green)}.de{background:var(--a2)}
 
-  /* STATS BAR */
-  .stats-bar {
-    display: flex; gap: 18px; padding: 10px 0; margin-bottom: 14px;
-    font-size: 11px; flex-wrap: wrap;
-  }
-  .stat { display: flex; align-items: center; gap: 5px; }
-  .stat-dot { width: 7px; height: 7px; border-radius: 50%; }
-  .stat-dot.all { background: var(--muted); }
-  .stat-dot.checked { background: var(--accent); }
-  .stat-dot.done { background: var(--success); }
-  .stat-dot.error { background: var(--accent2); }
+/* TOOLBAR */
+.tb{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
 
-  /* VIDEO LIST */
-  .video-list-header {
-    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-    background: var(--panel); border: 1px solid var(--border); border-radius: 8px 8px 0 0;
-    font-size: 11px; color: var(--muted);
-  }
-  .video-list { border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
-  .video-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-    cursor: pointer;
-  }
-  .video-item:last-child { border-bottom: none; }
-  .video-item:hover { background: var(--card-hover); }
-  .video-item.selected { background: rgba(0,229,255,0.05); border-left: 3px solid var(--accent); }
-  .video-item.downloading { border-left: 3px solid var(--warn); }
-  .video-item.done { border-left: 3px solid var(--success); }
-  .video-item.error { border-left: 3px solid var(--accent2); }
+/* VIDEO LIST */
+.vlh{display:flex;align-items:center;gap:8px;padding:7px 11px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:7px 7px 0 0;font-size:8px;color:var(--muted);letter-spacing:1px}
+.vlist{border:1px solid var(--border);border-top:none;border-radius:0 0 7px 7px;overflow:hidden}
+.vi{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--card);border-bottom:1px solid var(--border);transition:background .12s;border-left:3px solid transparent}
+.vi:last-child{border-bottom:none}
+.vi:hover{background:var(--ch)}
+.vi.sel{background:rgba(0,229,255,0.04);border-left-color:var(--accent)}
+.vi.loading{border-left-color:var(--warn)}
+.vi.done{border-left-color:var(--green)}
+.vi.error{border-left-color:var(--a2)}
 
-  .vi-check { flex-shrink: 0; }
-  .vi-thumb {
-    width: 72px; height: 45px; border-radius: 4px; object-fit: cover;
-    background: var(--border); flex-shrink: 0; border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center; font-size: 18px; overflow: hidden;
-  }
-  .vi-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .vi-info { flex: 1; min-width: 0; }
-  .vi-title { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Noto Sans SC', sans-serif; }
-  .vi-url { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .vi-meta { display: flex; gap: 8px; margin-top: 3px; }
-  .vi-badge {
-    font-size: 9px; padding: 1px 6px; border-radius: 3px; letter-spacing: 0.5px;
-  }
-  .badge-bili { background: rgba(0,181,226,0.15); color: #00b5e2; }
-  .badge-dy { background: rgba(255,61,107,0.15); color: var(--accent2); }
-  .badge-type { background: rgba(123,97,255,0.15); color: var(--accent3); }
+/* CHECKBOX */
+.ck{flex-shrink:0;cursor:pointer;user-select:none}
+.ck input{display:none}
+.ck-box{width:14px;height:14px;border:1px solid var(--muted);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .15s}
+.ck input:checked+.ck-box{background:var(--accent);border-color:var(--accent);color:var(--bg)}
 
-  .vi-actions { display: flex; gap: 6px; flex-shrink: 0; }
-  .vi-btn {
-    padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer;
-    border: 1px solid; background: transparent; font-family: 'Space Mono', monospace;
-    transition: all 0.15s; letter-spacing: 0.5px;
-  }
-  .vi-btn.video { color: var(--accent); border-color: var(--accent); }
-  .vi-btn.video:hover { background: rgba(0,229,255,0.1); }
-  .vi-btn.image { color: var(--accent3); border-color: var(--accent3); }
-  .vi-btn.image:hover { background: rgba(123,97,255,0.1); }
-  .vi-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+/* THUMB */
+.vthumb{width:66px;height:41px;border-radius:4px;background:var(--border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:15px;border:1px solid var(--border);cursor:pointer;position:relative}
+.vthumb img{width:100%;height:100%;object-fit:cover}
+.vthumb .pov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);font-size:18px}
+.vthumb:hover .pov{display:flex}
 
-  .vi-status {
-    font-size: 9px; letter-spacing: 1px; flex-shrink: 0; min-width: 60px; text-align: right;
-    font-family: 'Space Mono', monospace;
-  }
-  .status-waiting { color: var(--muted); }
-  .status-loading { color: var(--warn); }
-  .status-done { color: var(--success); }
-  .status-error { color: var(--accent2); }
+/* INFO */
+.vinfo{flex:1;min-width:0;cursor:pointer}
+.vtitle{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Noto Sans SC',sans-serif;margin-bottom:2px}
+.vurl{font-size:8px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.vmeta{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.badge{font-size:7px;padding:1px 5px;border-radius:3px}
+.bbili{background:rgba(0,181,226,0.15);color:#00b5e2}
+.bdy{background:rgba(255,61,107,0.15);color:var(--a2)}
+.bq{background:rgba(123,97,255,0.15);color:var(--a3)}
+.bok{background:rgba(0,230,118,0.15);color:var(--green)}
 
-  /* PROGRESS */
-  .progress-bar-wrap { height: 2px; background: var(--border); border-radius: 1px; margin-top: 4px; display: none; }
-  .progress-bar { height: 100%; background: var(--accent); border-radius: 1px; transition: width 0.3s; width: 0%; }
-  .video-item.downloading .progress-bar-wrap { display: block; }
+/* ACTIONS */
+.vacts{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
 
-  /* EMPTY STATE */
-  .empty-state {
-    padding: 60px 20px; text-align: center; color: var(--muted);
-    font-family: 'Noto Sans SC', sans-serif;
-  }
-  .empty-state .icon { font-size: 42px; margin-bottom: 12px; }
-  .empty-state p { font-size: 13px; }
-  .empty-state small { font-size: 11px; color: var(--border); margin-top: 6px; display: block; }
+/* STATUS */
+.vstat{font-size:8px;flex-shrink:0;width:58px;text-align:right;font-family:'Space Mono',monospace}
+.sw{color:var(--muted)}.sl{color:var(--warn)}.sd{color:var(--green)}.se{color:var(--a2)}
 
-  /* LOG */
-  .log-area {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 12px; font-size: 10px; height: 120px; overflow-y: auto;
-    font-family: 'Space Mono', monospace; color: var(--muted); margin-top: 16px;
-  }
-  .log-area .log-line { padding: 1px 0; }
-  .log-area .log-info { color: var(--accent); }
-  .log-area .log-ok { color: var(--success); }
-  .log-area .log-err { color: var(--accent2); }
-  .log-area .log-warn { color: var(--warn); }
+/* PROGRESS */
+.pw{height:2px;background:var(--border);border-radius:1px;margin-top:4px;display:none}
+.pb{height:100%;background:var(--accent);border-radius:1px;transition:width .4s}
+.vi.loading .pw{display:block}
 
-  /* MODAL */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-    z-index: 100; align-items: center; justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-    padding: 24px; width: 400px; max-width: 95vw;
-  }
-  .modal h3 { font-size: 14px; color: var(--accent); margin-bottom: 14px; letter-spacing: 1px; }
-  .modal img { width: 100%; border-radius: 6px; margin-bottom: 12px; }
-  .modal .close-btn { float: right; font-size: 18px; cursor: pointer; color: var(--muted); background: none; border: none; }
-  .modal .close-btn:hover { color: var(--text); }
-  .modal-info { font-size: 11px; color: var(--muted); line-height: 1.7; font-family: 'Noto Sans SC', sans-serif; }
-  .modal-info strong { color: var(--text); }
+/* EMPTY */
+.empty{padding:48px 20px;text-align:center;color:var(--muted);font-family:'Noto Sans SC',sans-serif}
+.empty .ico{font-size:38px;margin-bottom:10px}
 
-  /* NOTICE */
-  .notice {
-    background: rgba(255,179,0,0.07); border: 1px solid rgba(255,179,0,0.2);
-    border-radius: 8px; padding: 12px 16px; font-size: 11px; color: var(--warn);
-    margin-bottom: 16px; font-family: 'Noto Sans SC', sans-serif; line-height: 1.6;
-  }
-  .notice strong { display: block; margin-bottom: 4px; }
+/* LOG */
+.logbox{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 11px;font-size:9px;height:100px;overflow-y:auto;margin-top:12px}
+.ll{padding:1px 0}
+.li{color:var(--accent)}.lo{color:var(--green)}.le{color:var(--a2)}.lw{color:var(--warn)}
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;align-items:center;justify-content:center}
+.mov.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:20px;width:500px;max-width:96vw;max-height:92vh;overflow-y:auto}
+.modal h3{font-size:12px;color:var(--accent);margin-bottom:12px;letter-spacing:1px}
+.mc{float:right;font-size:15px;cursor:pointer;color:var(--muted);background:none;border:none}
+.mc:hover{color:var(--text)}
+.modal img{width:100%;border-radius:5px;margin-bottom:11px;border:1px solid var(--border)}
+.minfo{font-size:10px;color:var(--muted);line-height:1.8;font-family:'Noto Sans SC',sans-serif}
+.minfo strong{color:var(--text)}
+.macts{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
 
-  /* LOADING SPINNER */
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner {
-    width: 12px; height: 12px; border: 2px solid transparent;
-    border-top-color: var(--accent); border-radius: 50%;
-    animation: spin 0.7s linear infinite; display: inline-block;
-  }
+/* DL PROGRESS */
+.dlp{margin-top:10px;display:none}
+.dlbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:5px 0}
+.dlfill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;width:0}
+.dlstat{font-size:9px;color:var(--muted)}
 
-  @keyframes fadeIn { from { opacity:0; transform:translateY(6px);} to { opacity:1; transform:none; } }
-  .video-item { animation: fadeIn 0.2s ease; }
+/* GUIDE */
+.gs{margin-bottom:18px}
+.gs h4{color:var(--a2);font-size:10px;letter-spacing:1px;margin-bottom:7px;font-family:'Space Mono',monospace}
+.gs p{font-size:12px;color:var(--text);line-height:1.8;font-family:'Noto Sans SC',sans-serif}
+code.blk{display:block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:9px 11px;font-size:9px;color:var(--green);margin:7px 0;line-height:1.8;word-break:break-all;font-family:'Space Mono',monospace}
 
-  .select-all-label { font-size: 11px; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; }
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.vi{animation:fadeIn .16s ease}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{width:9px;height:9px;border:1.5px solid transparent;border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <div class="logo-icon">⬇</div>
-    <div>
-      <h1>BILIDOWN</h1>
-      <p>Công cụ tải video Bilibili & Douyin — Hỗ trợ hàng loạt</p>
-    </div>
-    <div class="platform-tags">
-      <span class="ptag bili">BILIBILI</span>
-      <span class="ptag dy">DOUYIN</span>
-    </div>
-  </header>
+<div class="w">
 
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('input')">📥 NHẬP LINK</button>
-    <button class="tab" onclick="switchTab('queue')">📋 DANH SÁCH (<span id="queue-count">0</span>)</button>
-    <button class="tab" onclick="switchTab('guide')">📖 HƯỚNG DẪN</button>
+<!-- HEADER -->
+<header>
+  <div class="logo">⬇</div>
+  <div>
+    <h1>BILIDOWN</h1>
+    <p>Tải trực tiếp từ trình duyệt — Bilibili & Douyin</p>
   </div>
+  <div class="htags">
+    <span class="ptag bili">BILIBILI</span>
+    <span class="ptag dy">DOUYIN</span>
+    <span class="api-dot" id="api-dot">● Cobalt API</span>
+  </div>
+</header>
 
-  <!-- TAB NHẬP LINK -->
-  <div class="tab-content active" id="tab-input">
-    <div class="notice">
-      <strong>⚡ Lưu ý quan trọng</strong>
-      Tool sẽ trích xuất link thuần từ text có kèm chữ. Ví dụ:<br>
-      <code style="color:#00e5ff">【冥河第九集】 https://www.bilibili.com/video/BV1Ez...</code><br>
-      → Tự động lọc thành: <code style="color:#00e676">https://www.bilibili.com/video/BV1Ez...</code>
-    </div>
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="sw('input')">📥 NHẬP LINK</button>
+  <button class="tab" onclick="sw('queue')">📋 DANH SÁCH <span class="tbadge" id="qc">0</span></button>
+  <button class="tab" onclick="sw('guide')">📖 HƯỚNG DẪN</button>
+</div>
 
-    <div class="input-section">
-      <label>DÁN LINK / TEXT CÓ LINK (mỗi dòng 1 link, hỗ trợ text lẫn link)</label>
-      <textarea id="link-input" placeholder="Dán nhiều link tại đây, mỗi dòng 1 link.
-Ví dụ:
-【冥河（人诡疑云）第九集】 https://www.bilibili.com/video/BV1EzGiz1ETU/
+<!-- ═══ TAB NHẬP LINK ═══ -->
+<div class="tab-pane active" id="tab-input">
+  <div class="info-box">
+    <b>✅ TẢI TRỰC TIẾP — Không cần cài gì thêm</b><br>
+    Tool dùng <b>Cobalt.tools API</b> — mỗi video có 3 nút tải:<br>
+    <b style="color:var(--accent)">📹 VIDEO+ÂM</b> &nbsp;·&nbsp; <b style="color:var(--green)">🎵 CHỈ AUDIO</b> &nbsp;·&nbsp; <b style="color:var(--a3)">🖼 ẢNH</b>
+  </div>
+  <div class="card">
+    <span class="clabel">DÁN LINK / TEXT CÓ LINK (mỗi dòng 1 mục — hỗ trợ text lẫn chữ Trung)</span>
+    <textarea id="linkin" placeholder="【冥河（人诡疑云）第九集 死亡 动画】 https://www.bilibili.com/video/BV1EzGiz1ETU/
 https://www.douyin.com/video/7321234567890
 https://b23.tv/aBcDe
 ..."></textarea>
-      <div class="hint">
-        Tool tự động <span>loại bỏ chữ cái/ký tự</span> không phải link — chỉ giữ lại URL hợp lệ của Bilibili & Douyin.
-      </div>
-    </div>
+    <div style="font-size:9px;color:var(--muted);margin-top:5px;font-family:'Noto Sans SC',sans-serif">⚡ Tự động loại bỏ chữ Trung/ký tự, chỉ giữ URL hợp lệ</div>
+  </div>
 
-    <div class="options-row">
-      <div class="opt-group">
+  <div class="card">
+    <div class="opts">
+      <div class="og">
         <label>CHẤT LƯỢNG VIDEO</label>
-        <select id="quality-select">
-          <option value="best">🏆 Cao nhất (Best)</option>
-          <option value="1080p">🎬 1080p Full HD</option>
-          <option value="720p">📺 720p HD</option>
-          <option value="480p">📱 480p</option>
-          <option value="360p">💾 360p</option>
+        <select id="qsel">
+          <option value="max">🏆 Cao nhất</option>
+          <option value="1080">🎬 1080p</option>
+          <option value="720">📺 720p</option>
+          <option value="480">📱 480p</option>
+          <option value="360">💾 360p</option>
         </select>
       </div>
-      <div class="opt-group">
-        <label>ĐỊNH DẠNG</label>
-        <select id="format-select">
-          <option value="mp4">MP4</option>
-          <option value="mkv">MKV</option>
-          <option value="webm">WebM</option>
+      <div class="og">
+        <label>AUDIO FORMAT</label>
+        <select id="afmt">
+          <option value="mp3">MP3</option>
+          <option value="ogg">OGG</option>
+          <option value="wav">WAV</option>
+          <option value="opus">OPUS</option>
+          <option value="best">Best</option>
         </select>
       </div>
-      <div style="flex:1; display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
-        <label class="checkbox-group">
-          <input type="checkbox" id="dl-video" checked>
-          <span class="custom-check"></span>
-          <span>Tải Video</span>
-        </label>
-        <label class="checkbox-group">
-          <input type="checkbox" id="dl-thumb" checked>
-          <span class="custom-check"></span>
-          <span>Tải Ảnh Thumbnail</span>
-        </label>
-        <label class="checkbox-group">
-          <input type="checkbox" id="dl-audio">
-          <span class="custom-check"></span>
-          <span>Chỉ Audio</span>
-        </label>
+      <div class="og">
+        <label>COBALT API SERVER</label>
+        <select id="apisel" onchange="onApiChange()">
+          <option value="https://api.cobalt.tools">api.cobalt.tools (chính thức)</option>
+          <option value="https://cobalt.api.timelessnesses.me">timelessnesses.me</option>
+          <option value="https://cobalt.ggtyler.dev">ggtyler.dev</option>
+          <option value="custom">✏ Tùy chỉnh...</option>
+        </select>
       </div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="parseLinks()">
-        <span>🔍</span> PHÂN TÍCH LINK
-      </button>
-      <button class="btn btn-secondary" onclick="clearInput()">
-        🗑 Xóa
-      </button>
+      <div class="og" id="custwrap" style="display:none">
+        <label>API URL TÙY CHỈNH</label>
+        <input type="text" id="custapi" placeholder="https://your-cobalt.com" style="width:200px">
+      </div>
     </div>
   </div>
 
-  <!-- TAB DANH SÁCH -->
-  <div class="tab-content" id="tab-queue">
-    <div class="stats-bar">
-      <span class="stat"><span class="stat-dot all"></span><span id="stat-total">0</span> tổng</span>
-      <span class="stat"><span class="stat-dot checked"></span><span id="stat-selected">0</span> đã chọn</span>
-      <span class="stat"><span class="stat-dot done"></span><span id="stat-done">0</span> xong</span>
-      <span class="stat"><span class="stat-dot error"></span><span id="stat-error">0</span> lỗi</span>
-    </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn bp" onclick="parseLinks()">🔍 PHÂN TÍCH LINK</button>
+    <button class="btn bs" onclick="document.getElementById('linkin').value=''">🗑 Xóa</button>
+    <button class="btn bs" onclick="testApi()" id="testbtn"><span id="testspin" style="display:none" class="spin"></span> 🔌 Kiểm tra API</button>
+  </div>
+</div>
 
-    <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:center;">
-      <label class="select-all-label">
-        <input type="checkbox" id="select-all" onchange="toggleSelectAll(this)">
-        <span class="custom-check" id="select-all-check"></span>
-        <span>Chọn tất cả</span>
-      </label>
-      <div style="flex:1"></div>
-      <button class="btn btn-primary" id="btn-download-selected" onclick="downloadSelected()" disabled>
-        ⬇ TẢI NHỮNG CÁI ĐÃ CHỌN
-      </button>
-      <button class="btn btn-secondary" onclick="downloadAll()">
-        📦 TẢI TẤT CẢ
-      </button>
-      <button class="btn btn-danger" onclick="clearQueue()">
-        🗑 Xóa hàng đợi
-      </button>
-    </div>
-
-    <div id="video-list-wrap">
-      <div class="empty-state">
-        <div class="icon">📭</div>
-        <p>Chưa có link nào trong danh sách</p>
-        <small>Hãy nhập link ở tab "NHẬP LINK" và nhấn "Phân Tích Link"</small>
-      </div>
-    </div>
-
-    <div class="log-area" id="log-area">
-      <div class="log-line log-info">// Nhật ký hoạt động sẽ hiện ở đây...</div>
-    </div>
+<!-- ═══ TAB DANH SÁCH ═══ -->
+<div class="tab-pane" id="tab-queue">
+  <div class="stats">
+    <span class="stat"><span class="dot da"></span><span id="st-t">0</span> tổng</span>
+    <span class="stat"><span class="dot ds"></span><span id="st-s">0</span> đã chọn</span>
+    <span class="stat"><span class="dot dd"></span><span id="st-d">0</span> xong</span>
+    <span class="stat"><span class="dot de"></span><span id="st-e">0</span> lỗi</span>
   </div>
 
-  <!-- TAB HƯỚNG DẪN -->
-  <div class="tab-content" id="tab-guide">
-    <div class="input-section" style="line-height:1.9; font-family:'Noto Sans SC',sans-serif; font-size:13px;">
-      <h3 style="color:var(--accent); margin-bottom:14px; font-family:'Space Mono',monospace;">📖 HƯỚNG DẪN SỬ DỤNG</h3>
+  <div class="tb">
+    <label class="ck" style="font-size:10px;display:flex;align-items:center;gap:6px;cursor:pointer">
+      <input type="checkbox" id="chkall" onchange="toggleAll(this)">
+      <span class="ck-box" id="allbox">☐</span>
+      <span>Chọn tất cả</span>
+    </label>
+    <div style="flex:1"></div>
+    <span style="font-size:9px;color:var(--muted)">Tải CHỌN:</span>
+    <button class="btn bv sm" id="bsv" onclick="batch('video','cobalt')" disabled>🌐📹 VIDEO</button>
+    <button class="btn ba sm" id="bsa" onclick="batch('audio','cobalt')" disabled>🌐🎵 AUDIO</button>
+    <button class="btn byt sm" id="bsvyt" onclick="batchYtdlp('video')" disabled>⚙📹 yt-dlp</button>
+    <button class="btn byta sm" id="bsayt" onclick="batchYtdlp('audio')" disabled>⚙🎵 yt-dlp</button>
+    <button class="btn bs sm" onclick="batch('all','cobalt')">📦 TẤT CẢ</button>
+    <button class="btn bd sm" onclick="clearQ()">🗑 Xóa</button>
+  </div>
 
-      <p style="color:var(--muted); margin-bottom:16px;">Tool này là giao diện người dùng — để tải thực tế, bạn cần cài <strong style="color:var(--accent)">yt-dlp</strong> hoặc plugin trình duyệt. Tool sẽ tạo lệnh CLI tương ứng.</p>
+  <div id="vwrap">
+    <div class="empty"><div class="ico">📭</div><p>Chưa có link nào — nhập link ở tab NHẬP LINK</p></div>
+  </div>
+  <div class="logbox" id="logbox"></div>
+</div>
 
-      <div style="margin-bottom:18px;">
-        <p style="color:var(--accent2); font-weight:700; margin-bottom:8px;">① NHẬP LINK</p>
-        <p>Dán bất kỳ text nào có chứa link Bilibili/Douyin. Tool tự động lọc link:</p>
-        <code style="display:block; background:var(--bg); padding:10px; border-radius:5px; margin:8px 0; font-size:11px; color:#00e676; border:1px solid var(--border)">
-【冥河第九集 死亡 动画】 https://www.bilibili.com/video/BV1Ez...<br>
-→ Lọc thành: https://www.bilibili.com/video/BV1Ez...
-        </code>
-      </div>
-
-      <div style="margin-bottom:18px;">
-        <p style="color:var(--accent2); font-weight:700; margin-bottom:8px;">② CHỌN CHẤT LƯỢNG</p>
-        <p>Chọn <strong>Cao nhất</strong> để tự động lấy chất lượng tốt nhất, hoặc chọn 1080p/720p... tuỳ nhu cầu.</p>
-      </div>
-
-      <div style="margin-bottom:18px;">
-        <p style="color:var(--accent2); font-weight:700; margin-bottom:8px;">③ TẢI THUMBNAIL</p>
-        <p>Bật "Tải Ảnh Thumbnail" để lưu ảnh bìa video — giúp nhận diện đúng video khi quản lý file.</p>
-      </div>
-
-      <div style="margin-bottom:18px;">
-        <p style="color:var(--accent2); font-weight:700; margin-bottom:8px;">④ LỆNH YT-DLP (NÂNG CAO)</p>
-        <p>Cài yt-dlp và dùng lệnh sau để tải Bilibili/Douyin:</p>
-        <code style="display:block; background:var(--bg); padding:10px; border-radius:5px; margin:8px 0; font-size:10px; color:var(--accent); border:1px solid var(--border); word-break:break-all">
-# Tải video 1080p + thumbnail:<br>
-yt-dlp -f "bestvideo[height<=1080]+bestaudio" --write-thumbnail -o "%(title)s.%(ext)s" [URL]<br><br>
-# Tải hàng loạt từ file links.txt:<br>
-yt-dlp -f "bestvideo+bestaudio" --write-thumbnail -a links.txt -o "%(title)s.%(ext)s"<br><br>
-# Douyin:<br>
-yt-dlp --cookies-from-browser chrome [URL]
-        </code>
-      </div>
-
-      <div>
-        <p style="color:var(--accent2); font-weight:700; margin-bottom:8px;">⑤ NHẬP LINK TOÀN BỘ VIDEO TỪ KÊNH/TÀI KHOẢN</p>
-        <p>Để lấy tất cả video của 1 kênh Bilibili, dán link kênh vào ô nhập liệu:<br>
-        <code style="font-size:11px; color:#00e5ff">https://space.bilibili.com/[UID]</code><br>
-        hoặc dùng yt-dlp: <code style="font-size:11px; color:#00e676">yt-dlp --flat-playlist https://space.bilibili.com/[UID]/video</code>
-        </p>
-      </div>
+<!-- ═══ TAB HƯỚNG DẪN ═══ -->
+<div class="tab-pane" id="tab-guide">
+  <div class="card" style="line-height:1.8">
+    <div class="gs">
+      <h4>① CÁCH TẢI TRỰC TIẾP (file HTML này)</h4>
+      <p>Dùng <b>Cobalt.tools</b> — API mã nguồn mở. Nhập link → nhấn nút tải → file tự download về máy, không cần cài gì.</p>
+    </div>
+    <div class="gs">
+      <h4>② 3 NÚT TẢI</h4>
+      <p>
+        <b style="color:var(--accent)">📹 VIDEO+ÂM</b> — Video đầy đủ có âm thanh (mp4)<br>
+        <b style="color:var(--green)">🎵 CHỈ AUDIO</b> — Chỉ âm thanh (mp3/ogg/wav...)<br>
+        <b style="color:var(--a3)">🖼 ẢNH</b> — Thumbnail/ảnh bìa video
+      </p>
+    </div>
+    <div class="gs">
+      <h4>③ NẾU BỊ CHẶN / LỖI API</h4>
+      <p>Đổi sang API server khác trong phần "COBALT API SERVER". Hoặc tự host:</p>
+      <code class="blk">docker run -p 9000:9000 ghcr.io/imputnet/cobalt:10</code>
+    </div>
+    <div class="gs">
+      <h4>④ LỌC LINK TỰ ĐỘNG</h4>
+      <code class="blk">【冥河第九集】 https://bilibili.com/video/BV1Ez...<br>→ Tự lọc thành: https://bilibili.com/video/BV1Ez...</code>
+    </div>
+    <div class="gs">
+      <h4>⑤ FILE PY — DÙNG YT-DLP (mạnh hơn)</h4>
+      <p>File <b>bilidown.py</b> hỗ trợ 2 chế độ: tải bằng lệnh yt-dlp hoặc tải trực tiếp qua Cobalt API.</p>
+      <code class="blk">pip install yt-dlp Pillow requests<br>python bilidown.py</code>
+    </div>
+    <div class="gs">
+      <h4>⑥ YT-DLP LỆNH THỦ CÔNG</h4>
+      <code class="blk"># Video 1080p + thumbnail:<br>yt-dlp -f "bestvideo[height&lt;=1080]+bestaudio" --write-thumbnail -o "%(title)s.%(ext)s" [URL]<br><br># Chỉ audio MP3:<br>yt-dlp -x --audio-format mp3 [URL]<br><br># Hàng loạt:<br>yt-dlp -f "bestvideo+bestaudio" -a links.txt -o "%(title)s.%(ext)s"</code>
     </div>
   </div>
 </div>
 
-<!-- MODAL XEM CHI TIẾT -->
-<div class="modal-overlay" id="detail-modal">
+</div><!-- /w -->
+
+<!-- MODAL -->
+<div class="mov" id="mov">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal()">✕</button>
-    <h3 id="modal-title">CHI TIẾT VIDEO</h3>
-    <img id="modal-thumb" src="" alt="thumbnail" onerror="this.style.display='none'">
-    <div class="modal-info" id="modal-info"></div>
-    <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;" id="modal-actions"></div>
+    <button class="mc" onclick="closeMod()">✕</button>
+    <h3 id="mtitle">CHI TIẾT</h3>
+    <img id="mthumb" src="" alt="" style="display:none" onerror="this.style.display='none'">
+    <div class="minfo" id="minfo"></div>
+    <div class="dlp" id="dlp">
+      <div id="dllabel" style="font-size:9px;color:var(--muted)">Đang tải...</div>
+      <div class="dlbar"><div class="dlfill" id="dlfill"></div></div>
+      <div class="dlstat" id="dlstat"></div>
+    </div>
+    <div class="macts" id="macts"></div>
   </div>
 </div>
 
 <script>
-// State
-let videoQueue = [];
-let selectedIds = new Set();
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+const URL_RE = /https?:\/\/(?:(?:www\.)?bilibili\.com\/video\/[A-Za-z0-9_/?=&%#.\-]+|b23\.tv\/[A-Za-z0-9]+|(?:www\.)?douyin\.com\/video\/\d+|v\.douyin\.com\/[A-Za-z0-9]+|vm\.tiktok\.com\/[A-Za-z0-9]+)[^\s\u4e00-\u9fff"'<>]*/g;
+let Q = [], SEL = new Set();
 
-// ======================== PARSING ========================
-function extractUrls(text) {
-  const urlRegex = /https?:\/\/(www\.)?(bilibili\.com\/video\/[A-Za-z0-9_\/?=&%#.-]+|b23\.tv\/[A-Za-z0-9]+|douyin\.com\/video\/[0-9]+|vm\.tiktok\.com\/[A-Za-z0-9]+|v\.douyin\.com\/[A-Za-z0-9]+)[^\s"]*/g;
-  const matches = text.match(urlRegex) || [];
-  // Clean trailing punctuation
-  return [...new Set(matches.map(u => u.replace(/[.,!?;，。！？；\])}]+$/, '')))];
-}
+/* ═══════════════════════════════
+   HELPERS
+═══════════════════════════════ */
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function getPlatform(u){return(u.includes('bilibili.com')||u.includes('b23.tv'))?'bilibili':'douyin'}
+function getID(u){const m=u.match(/\/(BV[A-Za-z0-9]+)/)||u.match(/\/video\/(\d+)/);return m?m[1]:u.slice(-10)}
+function getApiBase(){const v=document.getElementById('apisel').value;return v==='custom'?document.getElementById('custapi').value.trim().replace(/\/$/,''):v}
+function onApiChange(){document.getElementById('custwrap').style.display=document.getElementById('apisel').value==='custom'?'flex':'none'}
 
-function detectPlatform(url) {
-  if (url.includes('bilibili.com') || url.includes('b23.tv')) return 'bilibili';
-  if (url.includes('douyin.com') || url.includes('v.douyin.com') || url.includes('vm.tiktok.com')) return 'douyin';
-  return 'unknown';
-}
-
-function extractBVID(url) {
-  const m = url.match(/\/(BV[A-Za-z0-9]+)/);
-  return m ? m[1] : null;
-}
-
-function extractVideoTitle(url) {
-  const platform = detectPlatform(url);
-  const bvid = extractBVID(url);
-  if (bvid) return `[Bilibili] ${bvid}`;
-  const douyinMatch = url.match(/video\/(\d+)/);
-  if (douyinMatch) return `[Douyin] ${douyinMatch[1]}`;
-  return 'Video';
-}
-
-function parseLinks() {
-  const raw = document.getElementById('link-input').value.trim();
-  if (!raw) { addLog('warn', 'Chưa nhập link nào.'); return; }
-
-  const urls = extractUrls(raw);
-  if (urls.length === 0) {
-    addLog('err', 'Không tìm thấy link Bilibili/Douyin hợp lệ nào.');
-    return;
-  }
-
-  let added = 0;
-  const existingUrls = new Set(videoQueue.map(v => v.cleanUrl));
-
-  urls.forEach(url => {
-    const cleanUrl = url.split('?')[0]; // also keep query params but note base
-    if (existingUrls.has(url)) {
-      addLog('warn', `Đã có: ${url.slice(0, 60)}...`);
-      return;
-    }
-    const id = 'v_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
-    const platform = detectPlatform(url);
-    const title = extractVideoTitle(url);
-    const bvid = extractBVID(url);
-
-    videoQueue.push({
-      id, url, cleanUrl: url, platform, title, bvid,
-      status: 'waiting',
-      thumb: null,
-      quality: document.getElementById('quality-select').value,
-      format: document.getElementById('format-select').value,
-      dlVideo: document.getElementById('dl-video').checked,
-      dlThumb: document.getElementById('dl-thumb').checked,
-    });
-    existingUrls.add(url);
-    added++;
+/* ═══════════════════════════════
+   PARSE LINKS
+═══════════════════════════════ */
+function parseLinks(){
+  const raw=document.getElementById('linkin').value.trim();
+  if(!raw){log('w','Chưa nhập link');return}
+  const urls=(raw.match(URL_RE)||[]).map(u=>u.replace(/[.,!?;，。！？；\])}]+$/,'')).filter((u,i,a)=>a.indexOf(u)===i);
+  if(!urls.length){log('e','Không tìm thấy link Bilibili/Douyin hợp lệ');return}
+  const exist=new Set(Q.map(v=>v.url));
+  let added=0;
+  const q=document.getElementById('qsel').value, af=document.getElementById('afmt').value;
+  urls.forEach(url=>{
+    if(exist.has(url)){log('w','Đã tồn tại: '+url.slice(0,55));return}
+    const id='v'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+    const platform=getPlatform(url), sid=getID(url);
+    Q.push({id,url,platform,sid,title:`[${platform.toUpperCase()}] ${sid}`,status:'wait',thumb:null,quality:q,audioFmt:af,progress:0});
+    exist.add(url); added++;
   });
+  log('i',`Tìm ${urls.length} link, thêm ${added} mục`);
+  renderList(); sw('queue');
+  Q.filter(v=>v.status==='wait'&&v.title.startsWith('[')).forEach(v=>fetchThumb(v));
+}
 
-  addLog('info', `Phân tích xong: tìm thấy ${urls.length} link, thêm ${added} vào hàng đợi.`);
+/* ═══════════════════════════════
+   THUMBNAIL
+═══════════════════════════════ */
+function fetchThumb(item){
+  fetch(`https://noembed.com/embed?url=${encodeURIComponent(item.url)}`,{signal:AbortSignal.timeout(8000)})
+    .then(r=>r.json()).then(d=>{
+      if(d.thumbnail_url)item.thumb=d.thumbnail_url;
+      if(d.title&&d.title!=='undefined')item.title=d.title;
+      refreshItem(item.id);
+    }).catch(()=>{});
+}
+
+/* ═══════════════════════════════
+   RENDER
+═══════════════════════════════ */
+function renderList(){
+  const w=document.getElementById('vwrap');
+  if(!Q.length){w.innerHTML='<div class="empty"><div class="ico">📭</div><p>Chưa có link nào</p></div>';updateStats();return}
+  w.innerHTML=`<div class="vlh"><span style="width:20px">☑</span><span style="width:68px">THUMB</span><span style="width:68px">NỀN</span><span style="flex:1">TÊN VIDEO</span><span style="width:220px;text-align:right">THAO TÁC</span></div><div class="vlist" id="vlist"></div>`;
+  Q.forEach(v=>document.getElementById('vlist').appendChild(makeVI(v)));
   updateStats();
-  renderVideoList();
-  switchTab('queue');
-
-  // Auto fetch thumbnails
-  videoQueue.filter(v => v.status === 'waiting').forEach(v => loadThumbnail(v));
 }
 
-// ======================== THUMBNAIL ========================
-function loadThumbnail(video) {
-  if (video.platform === 'bilibili' && video.bvid) {
-    // Use Bilibili's public API via proxy-free iframe method
-    const bvid = video.bvid;
-    // Try to use noembed/oembed or just show placeholder
-    const thumbUrl = `https://i0.hdslb.com/bfs/archive/${bvid}_u_1.jpg`;
-    video.thumb = thumbUrl;
-    // Also try oEmbed
-    fetchBilibiliThumb(video);
-  } else if (video.platform === 'douyin') {
-    video.thumb = null;
-    addLog('warn', `[${video.id}] Douyin thumbnail: cần API có auth.`);
-  }
-  renderVideoItem(video.id);
-}
-
-function fetchBilibiliThumb(video) {
-  // Try noembed
-  const oembedUrl = `https://noembed.com/embed?url=${encodeURIComponent(video.url)}`;
-  fetch(oembedUrl)
-    .then(r => r.json())
-    .then(data => {
-      if (data.thumbnail_url) {
-        video.thumb = data.thumbnail_url;
-        video.title = data.title || video.title;
-        renderVideoItem(video.id);
-        addLog('ok', `Đã tải thumbnail: ${video.title.slice(0,40)}...`);
-      }
-    })
-    .catch(() => {
-      // Silently fail - network may be blocked
-      addLog('warn', `[${video.bvid}] Không thể tải thumbnail qua API (network restricted).`);
-    });
-}
-
-// ======================== RENDER ========================
-function renderVideoList() {
-  const wrap = document.getElementById('video-list-wrap');
-  if (videoQueue.length === 0) {
-    wrap.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>Chưa có link nào</p><small>Nhập link ở tab "NHẬP LINK"</small></div>`;
-    return;
-  }
-  wrap.innerHTML = `
-    <div class="video-list-header">
-      <span style="width:24px"></span>
-      <span style="width:72px">THUMBNAIL</span>
-      <span style="flex:1">THÔNG TIN VIDEO</span>
-      <span style="width:160px;text-align:right">THAO TÁC</span>
-    </div>
-    <div class="video-list" id="video-list"></div>
-  `;
-  const list = document.getElementById('video-list');
-  videoQueue.forEach(v => {
-    const el = createVideoItemEl(v);
-    list.appendChild(el);
-  });
-  updateStats();
-  updateSelectAll();
-}
-
-function createVideoItemEl(video) {
-  const div = document.createElement('div');
-  div.className = `video-item ${video.status === 'done' ? 'done' : video.status === 'error' ? 'error' : video.status === 'loading' ? 'downloading' : ''} ${selectedIds.has(video.id) ? 'selected' : ''}`;
-  div.id = `item_${video.id}`;
-
-  const thumbHtml = video.thumb
-    ? `<img src="${video.thumb}" alt="thumb" onerror="this.parentElement.innerHTML='🎬'">`
-    : `<span style="color:var(--muted);font-size:13px">${video.platform === 'bilibili' ? '📺' : '📱'}</span>`;
-
-  const statusClass = {waiting:'status-waiting',loading:'status-loading',done:'status-done',error:'status-error'}[video.status] || 'status-waiting';
-  const statusLabel = {waiting:'CHỜTẢI',loading:'ĐANG TẢI',done:'✓ XONG',error:'✗ LỖI'}[video.status] || '—';
-
-  div.innerHTML = `
-    <div class="vi-check">
-      <label class="checkbox-group" onclick="event.stopPropagation()">
-        <input type="checkbox" ${selectedIds.has(video.id) ? 'checked' : ''} onchange="toggleItem('${video.id}', this.checked)">
-        <span class="custom-check"></span>
-      </label>
-    </div>
-    <div class="vi-thumb">${thumbHtml}</div>
-    <div class="vi-info" onclick="showDetail('${video.id}')" title="Nhấn để xem chi tiết">
-      <div class="vi-title">${escHtml(video.title)}</div>
-      <div class="vi-url">${escHtml(video.cleanUrl)}</div>
-      <div class="vi-meta">
-        <span class="vi-badge ${video.platform === 'bilibili' ? 'badge-bili' : 'badge-dy'}">${video.platform.toUpperCase()}</span>
-        <span class="vi-badge badge-type">${video.quality.toUpperCase()}</span>
-        ${video.dlThumb ? '<span class="vi-badge" style="background:rgba(0,230,118,0.12);color:var(--success)">🖼 ẢNH</span>' : ''}
+function makeVI(v){
+  const el=document.createElement('div');
+  const sc={wait:'',loading:'loading',done:'done',error:'error'}[v.status]||'';
+  el.className=`vi ${sc} ${SEL.has(v.id)?'sel':''}`;
+  el.id=`vi_${v.id}`;
+  const th=v.thumb?`<img src="${esc(v.thumb)}" alt="" onerror="this.parentElement.innerHTML='📺'"><div class="pov">▶</div>`:(v.platform==='bilibili'?'📺':'📱');
+  const st={wait:'<span class="vstat sw">CHỜTẢI</span>',loading:'<span class="vstat sl">⬇TẢI</span>',done:'<span class="vstat sd">✓XONG</span>',error:'<span class="vstat se">✗LỖI</span>'}[v.status]||'';
+  el.innerHTML=`
+    <label class="ck" onclick="event.stopPropagation()">
+      <input type="checkbox" ${SEL.has(v.id)?'checked':''} onchange="togVI('${v.id}',this.checked)">
+      <span class="ck-box">${SEL.has(v.id)?'✓':'☐'}</span>
+    </label>
+    <div class="vthumb" onclick="showDet('${v.id}')">${th}</div>
+    <div style="width:68px;flex-shrink:0"><span class="badge ${v.platform==='bilibili'?'bbili':'bdy'}">${v.platform.toUpperCase()}</span></div>
+    <div class="vinfo" onclick="showDet('${v.id}')">
+      <div class="vtitle">${esc(v.title)}</div>
+      <div class="vurl">${esc(v.url)}</div>
+      <div class="vmeta">
+        <span class="badge bq">${v.quality==='max'?'BEST':v.quality+'p'}</span>
+        ${v.status==='done'?'<span class="badge bok">✓XONG</span>':''}
       </div>
-      <div class="progress-bar-wrap"><div class="progress-bar" id="prog_${video.id}" style="width:${video.progress||0}%"></div></div>
+      <div class="pw"><div class="pb" id="pb_${v.id}" style="width:${v.progress}%"></div></div>
     </div>
-    <div class="vi-actions">
-      <button class="vi-btn video" onclick="event.stopPropagation(); downloadOne('${video.id}', 'video')" ${video.status==='done'?'disabled':''}>⬇ VIDEO</button>
-      <button class="vi-btn image" onclick="event.stopPropagation(); downloadOne('${video.id}', 'thumb')" ${!video.thumb?'disabled':''}>🖼 ẢNH</button>
+    <div class="vacts">
+      <button class="btn bv sm" onclick="event.stopPropagation();dlOne('${v.id}','video')" title="Tải video qua Cobalt (trực tiếp)">🌐📹 VIDEO</button>
+      <button class="btn ba sm" onclick="event.stopPropagation();dlOne('${v.id}','audio')" title="Tải audio qua Cobalt (trực tiếp)">🌐🎵 AUDIO</button>
+      <button class="btn byt sm" onclick="event.stopPropagation();openYtdlp('${v.id}','video')" title="Lệnh yt-dlp cho video">⚙📹 yt-dlp</button>
+      <button class="btn byta sm" onclick="event.stopPropagation();openYtdlp('${v.id}','audio')" title="Lệnh yt-dlp cho audio">⚙🎵 yt-dlp</button>
+      <button class="btn bi sm" onclick="event.stopPropagation();dlThumb('${v.id}')" title="Tải ảnh thumbnail" ${!v.thumb?'disabled':''}>🖼 ẢNH</button>
     </div>
-    <div class="vi-status ${statusClass}">${statusLabel}</div>
-  `;
-  return div;
+    ${st}`;
+  return el;
 }
 
-function renderVideoItem(id) {
-  const video = videoQueue.find(v => v.id === id);
-  if (!video) return;
-  const el = document.getElementById(`item_${id}`);
-  if (!el) return;
-  const newEl = createVideoItemEl(video);
-  el.replaceWith(newEl);
+function refreshItem(id){
+  const v=Q.find(x=>x.id===id); if(!v)return;
+  const el=document.getElementById(`vi_${id}`); if(!el)return;
+  el.replaceWith(makeVI(v)); updateStats();
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+/* ═══════════════════════════════
+   SELECT
+═══════════════════════════════ */
+function togVI(id,c){
+  c?SEL.add(id):SEL.delete(id);
+  const el=document.getElementById(`vi_${id}`);
+  if(el){el.classList.toggle('sel',c);const b=el.querySelector('.ck-box');if(b)b.textContent=c?'✓':'☐'}
+  updateStats(); updSelBtns();
+}
+function toggleAll(cb){
+  cb.checked?Q.forEach(v=>SEL.add(v.id)):SEL.clear();
+  document.getElementById('allbox').textContent=cb.checked?'✓':'☐';
+  Q.forEach(v=>{const el=document.getElementById(`vi_${v.id}`);if(el){el.classList.toggle('sel',cb.checked);const b=el.querySelector('.ck-box');if(b)b.textContent=cb.checked?'✓':'☐';const i=el.querySelector('input[type=checkbox]');if(i)i.checked=cb.checked}});
+  updateStats(); updSelBtns();
+}
+function updSelBtns(){const d=SEL.size===0;['bsv','bsa','bsvyt','bsayt'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=d;})}
+function updateStats(){
+  document.getElementById('st-t').textContent=Q.length;
+  document.getElementById('st-s').textContent=SEL.size;
+  document.getElementById('st-d').textContent=Q.filter(v=>v.status==='done').length;
+  document.getElementById('st-e').textContent=Q.filter(v=>v.status==='error').length;
+  document.getElementById('qc').textContent=Q.length;
 }
 
-// ======================== SELECT ========================
-function toggleItem(id, checked) {
-  if (checked) selectedIds.add(id);
-  else selectedIds.delete(id);
-  const el = document.getElementById(`item_${id}`);
-  if (el) el.classList.toggle('selected', checked);
-  updateStats();
-  updateSelectAll();
-  document.getElementById('btn-download-selected').disabled = selectedIds.size === 0;
-}
+/* ═══════════════════════════════
+   COBALT API
+═══════════════════════════════ */
+// Cobalt servers fallback list
+const COBALT_SERVERS=['https://api.cobalt.tools','https://cobalt.api.timelessnesses.me','https://cobalt.ggtyler.dev'];
 
-function toggleSelectAll(cb) {
-  const check = document.getElementById('select-all-check');
-  if (cb.checked) {
-    videoQueue.forEach(v => selectedIds.add(v.id));
-  } else {
-    selectedIds.clear();
+async function cobaltTry(base,url,type,af,q){
+  const body={url,downloadMode:type==='audio'?'audio':'auto',audioFormat:af||'mp3',filenameStyle:'basic',twitterGif:false,youtubeVideoCodec:'h264'};
+  if(q&&q!=='max'){body.videoQuality=q;}
+  log('i','  Server: '+base);
+  const res=await fetch(base+'/',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(20000)});
+  log('i','  HTTP '+res.status);
+  if(!res.ok){
+    let et='';try{const ed=await res.clone().json();et=JSON.stringify(ed);}catch(e){try{et=await res.text();}catch(e2){}}
+    throw new Error('HTTP '+res.status+': '+et.slice(0,100));
   }
-  videoQueue.forEach(v => {
-    const el = document.getElementById(`item_${v.id}`);
-    if (el) {
-      el.classList.toggle('selected', cb.checked);
-      const chk = el.querySelector('input[type=checkbox]');
-      if (chk) chk.checked = cb.checked;
+  const data=await res.json();
+  if(data.status==='error'){const c=typeof data.error==='object'?(data.error?.code||JSON.stringify(data.error)):String(data.error||'unknown');throw new Error('Cobalt: '+c);}
+  const dlUrl=data.url||(Array.isArray(data.picker)&&data.picker[0]?.url)||null;
+  if(!dlUrl)throw new Error('Khong co URL: '+JSON.stringify(data).slice(0,100));
+  return dlUrl;
+}
+
+async function cobalt(url,type){
+  const af=document.getElementById('afmt').value;
+  const q=document.getElementById('qsel').value;
+  const preferred=getApiBase();
+  const servers=[preferred,...COBALT_SERVERS.filter(s=>s!==preferred)];
+  let lastErr='';
+  for(const srv of servers){
+    try{const u=await cobaltTry(srv,url,type,af,q);log('o','  OK: '+srv);return u;}
+    catch(e){lastErr=e.message;log('w','  FAIL '+srv+': '+lastErr);}
+  }
+  throw new Error('Tat ca server that bai. Cuoi: '+lastErr);
+}
+
+async function downloadBlob(url,filename,vid){
+  try{
+    const res=await fetch(url,{signal:AbortSignal.timeout(180000)});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const total=parseInt(res.headers.get('content-length')||'0');
+    const reader=res.body.getReader();
+    const chunks=[]; let got=0;
+    while(true){
+      const{done,value}=await reader.read(); if(done)break;
+      chunks.push(value); got+=value.length;
+      const pct=total?Math.round(got/total*100):-1;
+      if(vid){const v=Q.find(x=>x.id===vid);if(v){v.progress=pct<0?50:pct;const pb=document.getElementById(`pb_${vid}`);if(pb)pb.style.width=(pct<0?50:pct)+'%'}}
+      updateDLP(pct,`${(got/1048576).toFixed(1)}MB${total?` / ${(total/1048576).toFixed(1)}MB`:''}`);
     }
-  });
-  updateStats();
-  document.getElementById('btn-download-selected').disabled = selectedIds.size === 0;
-}
-
-function updateSelectAll() {
-  const cb = document.getElementById('select-all');
-  const check = document.getElementById('select-all-check');
-  if (!cb) return;
-  const total = videoQueue.length;
-  const sel = selectedIds.size;
-  cb.checked = sel === total && total > 0;
-  if (check) {
-    check.style.background = cb.checked ? 'var(--accent)' : '';
-    check.style.borderColor = cb.checked ? 'var(--accent)' : '';
+    const blob=new Blob(chunks);
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+    log('o',`✓ Tải xong: ${filename}`); return true;
+  }catch(e){
+    log('w',`Fallback link: ${e.message}`);
+    const a=document.createElement('a'); a.href=url; a.download=filename; a.target='_blank';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    return false;
   }
 }
 
-// ======================== DOWNLOAD ========================
-function getYtDlpCommand(video) {
-  const qualityMap = {'best':'bestvideo+bestaudio','1080p':'bestvideo[height<=1080]+bestaudio','720p':'bestvideo[height<=720]+bestaudio','480p':'bestvideo[height<=480]+bestaudio','360p':'bestvideo[height<=360]+bestaudio'};
-  const fmtFlag = qualityMap[video.quality] || 'bestvideo+bestaudio';
-  const thumbFlag = video.dlThumb ? '--write-thumbnail' : '';
-  const mergeFlag = `--merge-output-format ${video.format}`;
-  return `yt-dlp -f "${fmtFlag}" ${thumbFlag} ${mergeFlag} -o "%(title)s.%(ext)s" "${video.url}"`;
-}
-
-function downloadOne(id, type) {
-  const video = videoQueue.find(v => v.id === id);
-  if (!video) return;
-
-  if (type === 'thumb' && video.thumb) {
-    // Direct image download
-    const a = document.createElement('a');
-    a.href = video.thumb;
-    a.download = (video.bvid || 'thumb') + '.jpg';
-    a.target = '_blank';
-    a.click();
-    addLog('ok', `Mở ảnh thumbnail: ${video.title.slice(0,40)}`);
-    return;
+async function dlOne(id,type){
+  const v=Q.find(x=>x.id===id); if(!v)return;
+  v.status='loading'; v.progress=5; refreshItem(id);
+  log('i',`Xử lý: ${v.title.slice(0,50)}`);
+  showDLP();
+  try{
+    const dlUrl=await cobalt(v.url,type);
+    v.progress=50; refreshItem(id);
+    const ext=type==='audio'?document.getElementById('afmt').value:'mp4';
+    const fname=(v.title||v.sid).replace(/[/\\?%*:|"<>]/g,'_').slice(0,80)+'.'+ext;
+    await downloadBlob(dlUrl,fname,id);
+    v.status='done'; v.progress=100;
+  }catch(e){
+    v.status='error'; v.progress=0;
+    log('e','Loi ['+v.sid+']: '+e.message);
   }
-
-  // For video: show yt-dlp command and open URL
-  const cmd = getYtDlpCommand(video);
-  video.status = 'loading';
-  video.progress = 10;
-  renderVideoItem(id);
-  updateStats();
-
-  // Copy command to clipboard
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(cmd).then(() => {
-      addLog('ok', `Đã copy lệnh yt-dlp. Chạy trong terminal để tải!`);
-    });
-  }
-
-  // Simulate download flow (since we can't actually download in browser without backend)
-  addLog('info', `Lệnh tải: ${cmd.slice(0,80)}...`);
-  showCommandModal(video, cmd);
-
-  // Mark as "done" after showing command
-  setTimeout(() => {
-    video.status = 'done';
-    video.progress = 100;
-    renderVideoItem(id);
-    updateStats();
-    addLog('ok', `[${video.platform.toUpperCase()}] ${video.title.slice(0,40)} — Lệnh đã sẵn sàng.`);
-  }, 800);
+  refreshItem(id); hideDLP();
 }
 
-function downloadSelected() {
-  const ids = [...selectedIds];
-  if (ids.length === 0) return;
-  addLog('info', `Bắt đầu tải ${ids.length} video đã chọn...`);
-
-  const cmds = ids.map(id => {
-    const v = videoQueue.find(x => x.id === id);
-    return v ? getYtDlpCommand(v) : null;
-  }).filter(Boolean);
-
-  // Show batch command modal
-  showBatchCommandModal(cmds, ids.length);
-
-  ids.forEach((id, i) => {
-    setTimeout(() => {
-      const v = videoQueue.find(x => x.id === id);
-      if (v) { v.status = 'done'; renderVideoItem(id); updateStats(); }
-    }, i * 200);
-  });
-}
-
-function downloadAll() {
-  const cmds = videoQueue.map(v => getYtDlpCommand(v));
-  showBatchCommandModal(cmds, videoQueue.length);
-  videoQueue.forEach((v, i) => {
-    setTimeout(() => { v.status = 'done'; renderVideoItem(v.id); updateStats(); }, i * 150);
-  });
-  addLog('info', `Tạo lệnh tải cho tất cả ${videoQueue.length} video.`);
-}
-
-// ======================== COMMAND MODALS ========================
-function showCommandModal(video, cmd) {
-  document.getElementById('modal-title').textContent = '📋 LỆNH TẢI VIDEO';
-  const thumbEl = document.getElementById('modal-thumb');
-  if (video.thumb) { thumbEl.src = video.thumb; thumbEl.style.display = ''; }
-  else thumbEl.style.display = 'none';
-
-  document.getElementById('modal-info').innerHTML = `
-    <strong>Tên:</strong> ${escHtml(video.title)}<br>
-    <strong>Platform:</strong> ${video.platform.toUpperCase()}<br>
-    <strong>Chất lượng:</strong> ${video.quality}<br>
-    <strong>URL:</strong> <a href="${video.url}" target="_blank" style="color:var(--accent);word-break:break-all">${escHtml(video.url)}</a><br>
-    <br>
-    <strong>Lệnh yt-dlp:</strong>
-    <code style="display:block;background:var(--bg);padding:10px;border-radius:5px;margin:6px 0;font-size:10px;color:var(--success);border:1px solid var(--border);word-break:break-all;white-space:pre-wrap">${escHtml(cmd)}</code>
-    <small style="color:var(--muted)">Lệnh đã được copy vào clipboard. Dán vào terminal để tải.</small>
-  `;
-  document.getElementById('modal-actions').innerHTML = `
-    <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${escHtml(cmd).replace(/'/g,"\\'")}'); addLog('ok','Đã copy lệnh!')">📋 Copy lệnh</button>
-    <a href="${video.url}" target="_blank"><button class="btn btn-secondary">🔗 Mở link</button></a>
-    <button class="btn btn-secondary" onclick="closeModal()">Đóng</button>
-  `;
-  document.getElementById('detail-modal').classList.add('open');
-}
-
-function showBatchCommandModal(cmds, count) {
-  document.getElementById('modal-title').textContent = `📦 LỆNH TẢI HÀNG LOẠT (${count} video)`;
-  document.getElementById('modal-thumb').style.display = 'none';
-  const allCmds = cmds.join('\n');
-  document.getElementById('modal-info').innerHTML = `
-    <strong>Tổng cộng ${count} lệnh:</strong><br>
-    <code style="display:block;background:var(--bg);padding:10px;border-radius:5px;margin:8px 0;font-size:9px;color:var(--success);border:1px solid var(--border);word-break:break-all;white-space:pre-wrap;max-height:200px;overflow-y:auto">${escHtml(allCmds)}</code>
-    <small style="color:var(--muted)">Hoặc tạo file links.txt và dùng: <code style="color:var(--accent)">yt-dlp -a links.txt -f "bestvideo+bestaudio" --write-thumbnail -o "%(title)s.%(ext)s"</code></small>
-  `;
-  const urlsOnly = videoQueue.filter(v => selectedIds.has(v.id) || count === videoQueue.length).map(v=>v.url).join('\n');
-  document.getElementById('modal-actions').innerHTML = `
-    <button class="btn btn-primary" onclick="navigator.clipboard.writeText(${JSON.stringify(allCmds)}); addLog('ok','Đã copy tất cả lệnh!')">📋 Copy tất cả lệnh</button>
-    <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(${JSON.stringify(urlsOnly)}); addLog('ok','Đã copy URLs!')">🔗 Copy chỉ URLs</button>
-    <button class="btn btn-secondary" onclick="closeModal()">Đóng</button>
-  `;
-  document.getElementById('detail-modal').classList.add('open');
-}
-
-// ======================== DETAIL MODAL ========================
-function showDetail(id) {
-  const video = videoQueue.find(v => v.id === id);
-  if (!video) return;
-  document.getElementById('modal-title').textContent = '📹 CHI TIẾT VIDEO';
-  const thumbEl = document.getElementById('modal-thumb');
-  if (video.thumb) { thumbEl.src = video.thumb; thumbEl.style.display = 'block'; }
-  else thumbEl.style.display = 'none';
-  document.getElementById('modal-info').innerHTML = `
-    <strong>Tên:</strong> ${escHtml(video.title)}<br>
-    <strong>Platform:</strong> ${video.platform.toUpperCase()}<br>
-    <strong>BVID/ID:</strong> ${video.bvid || '—'}<br>
-    <strong>Chất lượng:</strong> ${video.quality} | <strong>Format:</strong> ${video.format}<br>
-    <strong>Tải thumbnail:</strong> ${video.dlThumb ? 'Có' : 'Không'}<br>
-    <strong>URL:</strong><br>
-    <a href="${video.url}" target="_blank" style="color:var(--accent);word-break:break-all;font-size:11px">${escHtml(video.url)}</a>
-  `;
-  const cmd = getYtDlpCommand(video);
-  document.getElementById('modal-actions').innerHTML = `
-    <button class="btn btn-primary" onclick="downloadOne('${id}','video');closeModal()">⬇ TẢI VIDEO</button>
-    ${video.thumb ? `<button class="btn btn-secondary" onclick="downloadOne('${id}','thumb');closeModal()">🖼 TẢI ẢNH</button>` : ''}
-    <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(${JSON.stringify(cmd)});addLog('ok','Đã copy lệnh!')">📋 Copy lệnh</button>
-    <button class="btn btn-secondary" onclick="closeModal()">Đóng</button>
-  `;
-  document.getElementById('detail-modal').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('detail-modal').classList.remove('open');
-}
-
-// ======================== UTILITIES ========================
-function clearQueue() {
-  videoQueue = [];
-  selectedIds.clear();
-  renderVideoList();
-  addLog('warn', 'Đã xóa toàn bộ hàng đợi.');
-}
-
-function clearInput() {
-  document.getElementById('link-input').value = '';
-}
-
-function updateStats() {
-  const total = videoQueue.length;
-  const done = videoQueue.filter(v => v.status === 'done').length;
-  const errors = videoQueue.filter(v => v.status === 'error').length;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-selected').textContent = selectedIds.size;
-  document.getElementById('stat-done').textContent = done;
-  document.getElementById('stat-error').textContent = errors;
-  document.getElementById('queue-count').textContent = total;
-}
-
-function addLog(type, msg) {
-  const log = document.getElementById('log-area');
-  if (!log) return;
-  const time = new Date().toLocaleTimeString('vi-VN');
-  const div = document.createElement('div');
-  div.className = `log-line log-${type}`;
-  div.textContent = `[${time}] ${msg}`;
-  log.appendChild(div);
-  log.scrollTop = log.scrollHeight;
-}
-
-function switchTab(name) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  const tabs = ['input','queue','guide'];
-  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
-}
-
-// Close modal on overlay click
-document.getElementById('detail-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-// Handle select-all checkbox visual
-document.getElementById('select-all').addEventListener('change', function() {
-  const check = document.getElementById('select-all-check');
-  if (this.checked) {
-    check.style.background = 'var(--accent)'; check.style.borderColor = 'var(--accent)';
-    check.innerHTML = '<span style="font-size:10px;color:var(--bg)">✓</span>';
+// ──────── YT-DLP COMMAND MODAL ────────
+function openYtdlp(id, type){
+  const v=Q.find(x=>x.id===id); if(!v)return;
+  const q=document.getElementById('qsel').value;
+  const af=document.getElementById('afmt').value;
+  const qualMap={max:'bestvideo+bestaudio/best','1080':'bestvideo[height<=1080]+bestaudio/best','720':'bestvideo[height<=720]+bestaudio/best','480':'bestvideo[height<=480]+bestaudio/best','360':'bestvideo[height<=360]+bestaudio/best'};
+  const fmt=qualMap[q]||'bestvideo+bestaudio/best';
+  let cmd;
+  if(type==='audio'){
+    cmd=`yt-dlp -x --audio-format ${af} -o "%(title)s.%(ext)s" "${v.url}"`;
   } else {
-    check.style.background = ''; check.style.borderColor = ''; check.innerHTML = '';
+    cmd=`yt-dlp -f "${fmt}" --merge-output-format mp4 --write-thumbnail -o "%(title)s.%(ext)s" "${v.url}"`;
   }
+  // Show modal with command
+  document.getElementById('mtitle').textContent='⚙ LỆNH YT-DLP — '+(type==='audio'?'AUDIO':'VIDEO');
+  const th=document.getElementById('mthumb');
+  if(v.thumb){th.src=v.thumb;th.style.display='block';}else th.style.display='none';
+  document.getElementById('minfo').innerHTML=`
+    <strong>Video:</strong> ${esc(v.title)}<br>
+    <strong>URL:</strong> <a href="${esc(v.url)}" target="_blank" style="color:var(--accent);font-size:9px;word-break:break-all">${esc(v.url)}</a><br><br>
+    <strong>Lệnh yt-dlp:</strong>
+    <code id="ytcmd" style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:10px;font-size:10px;color:var(--green);margin:8px 0;word-break:break-all;white-space:pre-wrap;font-family:monospace">${esc(cmd)}</code>
+    <div style="font-size:9px;color:var(--muted);margin-top:4px;font-family:'Noto Sans SC',sans-serif">
+      💡 Copy lệnh → mở Terminal → dán vào → Enter để tải<br>
+      Chưa có yt-dlp? Chạy: <code style="color:var(--accent)">pip install yt-dlp</code>
+    </div>`;
+  document.getElementById('dlp').style.display='none';
+  document.getElementById('macts').innerHTML=`
+    <button class="btn byt" onclick="navigator.clipboard?.writeText(document.getElementById('ytcmd').textContent);log('o','Đã copy lệnh yt-dlp!')">📋 Copy lệnh</button>
+    <button class="btn bv" onclick="dlOne('${id}','${type}');closeMod()">🌐 Tải trực tiếp (Cobalt)</button>
+    <button class="btn bs" onclick="closeMod()">Đóng</button>`;
+  document.getElementById('mov').classList.add('open');
+}
+
+async function dlThumb(id){
+  const v=Q.find(x=>x.id===id); if(!v||!v.thumb){log('w','Chưa có thumbnail');return}
+  const fname=`${v.sid}_thumb.jpg`;
+  log('i',`Tải ảnh: ${fname}`);
+  // Proxy qua fetch để download
+  try{
+    const res=await fetch(v.thumb,{signal:AbortSignal.timeout(15000)});
+    const blob=await res.blob();
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+    log('o',`✓ Đã tải ảnh: ${fname}`);
+  }catch(e){
+    const a=document.createElement('a'); a.href=v.thumb; a.target='_blank'; a.click();
+    log('o','Mở ảnh trong tab mới');
+  }
+}
+
+/* ═══════════════════════════════
+   BATCH
+═══════════════════════════════ */
+let batchRunning=false;
+async function batch(type, mode){
+  if(batchRunning){log('w','Dang tai, cho xong');return}
+  let ids,dlType=type;
+  if(type==='all'){ids=Q.map(v=>v.id);dlType='video';}
+  else ids=[...SEL];
+  if(!ids.length)return;
+  batchRunning=true;
+  log('i',`Batch [${mode||'cobalt'}]: ${ids.length} muc (${dlType})`);
+  for(const id of ids){
+    await dlOne(id,dlType);
+    await new Promise(r=>setTimeout(r,800));
+  }
+  batchRunning=false;
+  log('o',`Batch xong: ${ids.length} muc`);
+}
+
+async function batchYtdlp(type){
+  // Show all commands at once in modal
+  const ids=[...SEL];
+  if(!ids.length){log('w','Chua chon video nao');return;}
+  const q=document.getElementById('qsel').value;
+  const af=document.getElementById('afmt').value;
+  const qualMap={max:'bestvideo+bestaudio/best','1080':'bestvideo[height<=1080]+bestaudio/best','720':'bestvideo[height<=720]+bestaudio/best','480':'bestvideo[height<=480]+bestaudio/best','360':'bestvideo[height<=360]+bestaudio/best'};
+  const fmt=qualMap[q]||'bestvideo+bestaudio/best';
+  const cmds=ids.map(id=>{
+    const v=Q.find(x=>x.id===id); if(!v)return'';
+    if(type==='audio') return `yt-dlp -x --audio-format ${af} -o "%(title)s.%(ext)s" "${v.url}"`;
+    return `yt-dlp -f "${fmt}" --merge-output-format mp4 --write-thumbnail -o "%(title)s.%(ext)s" "${v.url}"`;
+  }).filter(Boolean).join('\n');
+  document.getElementById('mtitle').textContent=`⚙ YT-DLP BATCH (${ids.length} video) — ${type.toUpperCase()}`;
+  document.getElementById('mthumb').style.display='none';
+  document.getElementById('minfo').innerHTML=`
+    <strong>${ids.length} lệnh yt-dlp:</strong>
+    <code id="ytcmd" style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:10px;font-size:9px;color:var(--green);margin:8px 0;word-break:break-all;white-space:pre-wrap;max-height:200px;overflow-y:auto;font-family:monospace">${esc(cmds)}</code>
+    <div style="font-size:9px;color:var(--muted)">Hoac tao file links.txt roi chay:<br>
+    <code style="color:var(--accent)">yt-dlp -a links.txt -f "${esc(fmt)}" --write-thumbnail -o "%(title)s.%(ext)s"</code></div>`;
+  document.getElementById('dlp').style.display='none';
+  document.getElementById('macts').innerHTML=`
+    <button class="btn byt" onclick="navigator.clipboard?.writeText(document.getElementById('ytcmd').textContent);log('o','Da copy lenh!')">📋 Copy tat ca lenh</button>
+    <button class="btn bs" onclick="closeMod()">Dong</button>`;
+  document.getElementById('mov').classList.add('open');
+}
+
+function clearQ(){if(!Q.length)return;Q=[];SEL.clear();renderList();log('w','Đã xóa hàng đợi')}
+
+/* ═══════════════════════════════
+   DL PROGRESS UI
+═══════════════════════════════ */
+function showDLP(){document.getElementById('dlp').style.display='block';document.getElementById('dlfill').style.width='0'}
+function hideDLP(){setTimeout(()=>{document.getElementById('dlp').style.display='none'},1500)}
+function updateDLP(pct,label){
+  document.getElementById('dllabel').textContent=pct<0?'Đang tải...':'Đang tải: '+pct+'%';
+  document.getElementById('dlfill').style.width=(pct<0?'60':pct)+'%';
+  document.getElementById('dlstat').textContent=label;
+}
+
+/* ═══════════════════════════════
+   DETAIL MODAL
+═══════════════════════════════ */
+function showDet(id){
+  const v=Q.find(x=>x.id===id); if(!v)return;
+  document.getElementById('mtitle').textContent='📹 CHI TIẾT VIDEO';
+  const th=document.getElementById('mthumb');
+  if(v.thumb){th.src=v.thumb;th.style.display='block'}else th.style.display='none';
+  document.getElementById('minfo').innerHTML=`
+    <strong>Tên:</strong> ${esc(v.title)}<br>
+    <strong>Platform:</strong> ${v.platform.toUpperCase()}<br>
+    <strong>ID:</strong> ${v.sid}<br>
+    <strong>Chất lượng:</strong> ${v.quality==='max'?'Cao nhất':v.quality+'p'}<br>
+    <strong>URL:</strong><br>
+    <a href="${esc(v.url)}" target="_blank" style="color:var(--accent);font-size:9px;word-break:break-all">${esc(v.url)}</a>`;
+  document.getElementById('dlp').style.display='none';
+  document.getElementById('macts').innerHTML=`
+    <button class="btn bv" onclick="dlOne('${id}','video');closeMod()">📹 VIDEO+ÂM</button>
+    <button class="btn ba" onclick="dlOne('${id}','audio');closeMod()">🎵 CHỈ AUDIO</button>
+    ${v.thumb?`<button class="btn bi" onclick="dlThumb('${id}');closeMod()">🖼 TẢI ẢNH</button>`:''}
+    <button class="btn bs" onclick="navigator.clipboard?.writeText('${esc(v.url)}');log('o','Đã copy URL!')">📋 Copy URL</button>
+    <button class="btn bs" onclick="closeMod()">Đóng</button>`;
+  document.getElementById('mov').classList.add('open');
+}
+function closeMod(){document.getElementById('mov').classList.remove('open')}
+document.getElementById('mov').addEventListener('click',e=>{if(e.target===document.getElementById('mov'))closeMod()});
+
+/* ═══════════════════════════════
+   API TEST
+═══════════════════════════════ */
+async function testApi(){
+  const dot=document.getElementById('api-dot'),sp=document.getElementById('testspin');
+  dot.className='api-dot chk';dot.textContent='● Đang kiểm tra...';sp.style.display='inline-block';
+  try{
+    const base=getApiBase();
+    const res=await fetch(`${base}/`,{method:'POST',signal:AbortSignal.timeout(10000),headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({url:'https://www.bilibili.com/video/BV1xx411c7mD'})});
+    // 400/422 = server up but invalid URL = OK
+    const ok=res.ok||res.status===400||res.status===422;
+    dot.className='api-dot '+(ok?'ok':'err');
+    dot.textContent=ok?'● API: Online ✓':`● API: Lỗi ${res.status}`;
+    log(ok?'o':'e',ok?'Cobalt API hoạt động bình thường':'API không phản hồi đúng: HTTP '+res.status);
+  }catch(e){
+    dot.className='api-dot err';dot.textContent='● API: Offline ✗';
+    log('e','Không kết nối được API. Thử server khác hoặc kiểm tra mạng.');
+  }finally{sp.style.display='none'}
+}
+
+/* ═══════════════════════════════
+   LOG
+═══════════════════════════════ */
+function log(type,msg){
+  const b=document.getElementById('logbox'); if(!b)return;
+  const d=document.createElement('div');
+  d.className='ll l'+type;
+  d.textContent=`[${new Date().toLocaleTimeString('vi-VN')}] ${msg}`;
+  b.appendChild(d); b.scrollTop=b.scrollHeight;
+}
+
+/* ═══════════════════════════════
+   TABS
+═══════════════════════════════ */
+function sw(name){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const m={input:0,queue:1,guide:2};
+  document.querySelectorAll('.tab')[m[name]].classList.add('active');
+}
+
+/* INIT */
+window.addEventListener('load',()=>{
+  log('i','BiliDown sẵn sàng — Nhập link và nhấn Phân Tích Link');
+  setTimeout(testApi,600);
 });
 </script>
 </body>
