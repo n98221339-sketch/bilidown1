@@ -2,708 +2,375 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BiliDown — Tải Video Bilibili & Douyin</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BiliDown — Bilibili & Douyin</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0a0f; --panel:#111118; --border:#1e1e2e;
-  --accent:#00e5ff; --a2:#ff3d6b; --a3:#7b61ff;
-  --green:#00e676; --warn:#ffb300; --text:#e0e0f0; --muted:#555570;
-  --card:#14141f; --ch:#1a1a2a;
-  /* Button colors */
-  --vid-bg:#071820;  --vid-fg:#00e5ff;
-  --aud-bg:#071a0f;  --aud-fg:#00e676;
-  --img-bg:#110d1e;  --img-fg:#7b61ff;
-  --cmd-bg:#1a1200;  --cmd-fg:#ffb300;
+  --bg:#0a0a0f;--panel:#111118;--border:#1e1e2e;--ch:#141420;
+  --accent:#00e5ff;--a2:#ff3d6b;--a3:#7b61ff;
+  --green:#00e676;--warn:#ffb300;--text:#e0e0f0;--muted:#555570;
+  --vid-bg:#071820;--vid-c:#00e5ff;
+  --aud-bg:#071a0f;--aud-c:#00e676;
+  --img-bg:#110d1e;--img-c:#7b61ff;
+  --web-bg:#1a1200;--web-c:#ffb300;
 }
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-.w{max-width:1060px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
-
-/* HEADER */
-header{padding:16px 0 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.logo{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--a3));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-header h1{font-size:18px;letter-spacing:2px;color:var(--accent)}
-header p{font-size:9px;color:var(--muted);margin-top:2px;font-family:'Noto Sans SC',sans-serif}
-.htags{margin-left:auto;display:flex;gap:6px;align-items:center}
-.ptag{padding:2px 8px;border-radius:4px;font-size:8px;letter-spacing:1px;border:1px solid}
-.ptag.bili{color:#00b5e2;border-color:#00b5e2;background:rgba(0,181,226,0.08)}
-.ptag.dy{color:var(--a2);border-color:var(--a2);background:rgba(255,61,107,0.08)}
-.ytdlp-badge{font-size:8px;padding:2px 10px;border-radius:10px;border:1px solid var(--green);color:var(--green);background:rgba(0,230,118,0.06)}
-
-/* TABS */
-.tabs{display:flex;margin:16px 0 0;border-bottom:1px solid var(--border)}
-.tab{padding:8px 16px;font-size:10px;letter-spacing:1px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'Space Mono',monospace}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab:hover:not(.active){color:var(--text)}
-.tbadge{background:var(--a3);color:#fff;border-radius:8px;font-size:8px;padding:1px 5px;margin-left:4px}
-.tab-pane{display:none;padding:16px 0}
-.tab-pane.active{display:block}
-
-/* CARDS */
-.card{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:12px}
-.clabel{font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px;display:block}
-
-/* INPUTS */
-textarea,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:11px;border-radius:5px;padding:9px 11px;resize:vertical;outline:none;transition:border-color .2s}
-textarea{height:96px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,229,255,.03)1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03)1px,transparent 1px);
+  background-size:42px 42px}
+.w{max-width:1060px;margin:0 auto;padding:0 14px;position:relative;z-index:1}
+header{background:var(--panel);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.hi{display:flex;align-items:center;gap:12px;padding:0 14px;height:52px;max-width:1060px;margin:0 auto}
+.logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--a3));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ht{font-size:17px;letter-spacing:2px;color:var(--accent);font-weight:700}
+.hs{font-size:9px;color:var(--muted);margin-top:1px;font-family:'Noto Sans SC',sans-serif}
+.hb{margin-left:auto;display:flex;gap:6px;align-items:center}
+.pt{padding:2px 8px;border-radius:4px;font-size:8px;letter-spacing:1px;border:1px solid}
+.pb{color:#00b5e2;border-color:#00b5e2;background:rgba(0,181,226,.08)}
+.pd{color:var(--a2);border-color:var(--a2);background:rgba(255,61,107,.08)}
+.pm{color:var(--green);border-color:var(--green);background:rgba(0,230,118,.08)}
+.tabbar{background:var(--panel);border-bottom:1px solid var(--border)}
+.tabs{display:flex;max-width:1060px;margin:0 auto;padding:0 14px}
+.tab{padding:11px 18px;font-size:10px;letter-spacing:1px;cursor:pointer;color:var(--muted);
+  border-bottom:2px solid transparent;transition:all .18s;background:none;
+  border-top:none;border-left:none;border-right:none;font-family:'Space Mono',monospace;white-space:nowrap}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.on){color:var(--text)}
+.tb2{background:var(--a3);color:#fff;border-radius:8px;font-size:8px;padding:1px 5px;margin-left:3px}
+.pane{display:none;padding:16px 0 50px}.pane.on{display:block}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.cl{font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px;display:block}
+textarea,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:11px;border-radius:6px;padding:9px 11px;resize:vertical;outline:none;transition:border-color .2s}
+textarea{height:100px}
 textarea:focus,input:focus{border-color:var(--accent)}
+textarea::placeholder{color:var(--muted)}
 select{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;border-radius:4px;outline:none;cursor:pointer}
-select:focus{border-color:var(--accent)}
-
-/* INFO BOXES */
-.info-box{border-radius:7px;padding:10px 14px;font-size:10px;margin-bottom:12px;line-height:1.8;font-family:'Noto Sans SC',sans-serif}
-.info-ytdlp{background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.2);color:var(--green)}
-.info-warn{background:rgba(255,179,0,0.05);border:1px solid rgba(255,179,0,0.2);color:var(--warn)}
-.info-box b{font-family:'Space Mono',monospace}
-
-/* OPTIONS */
+.ibox{border-radius:8px;padding:10px 14px;font-size:11px;margin-bottom:12px;line-height:1.8;font-family:'Noto Sans SC',sans-serif}
+.ibox b,.ibox code{font-family:'Space Mono',monospace}
+.ibg{background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.2);color:var(--green)}
 .opts{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
-.og{display:flex;flex-direction:column;gap:4px}
+.og{display:flex;flex-direction:column;gap:3px}
 .og label{font-size:9px;color:var(--muted);letter-spacing:1px}
-
-/* ═══════════════════════════════
-   BUTTONS — 4 TYPES CLEAR
-═══════════════════════════════ */
-.btn{padding:8px 16px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.5px;cursor:pointer;border:none;transition:all .16s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-weight:700}
+.btn{padding:7px 14px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.4px;cursor:pointer;border:none;transition:all .14s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-weight:700;text-decoration:none;line-height:1}
 .btn:active{transform:scale(.97)}
-.btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
-
-/* 📹 VIDEO+ÂM — cyan glow */
-.btn-vid{background:var(--vid-bg);color:var(--vid-fg);border:1px solid var(--vid-fg);box-shadow:0 0 8px rgba(0,229,255,0.15)}
-.btn-vid:hover{background:#0d2a36;box-shadow:0 0 14px rgba(0,229,255,0.3);transform:translateY(-1px)}
-
-/* 🎵 CHỈ AUDIO — green glow */
-.btn-aud{background:var(--aud-bg);color:var(--aud-fg);border:1px solid var(--aud-fg);box-shadow:0 0 8px rgba(0,230,118,0.15)}
-.btn-aud:hover{background:#0d2d16;box-shadow:0 0 14px rgba(0,230,118,0.3);transform:translateY(-1px)}
-
-/* 🖼 TẢI ẢNH — purple */
-.btn-img{background:var(--img-bg);color:var(--img-fg);border:1px solid var(--img-fg)}
-.btn-img:hover{background:#1c1435;transform:translateY(-1px)}
-
-/* 📋 LỆNH / CMD — amber */
-.btn-cmd{background:var(--cmd-bg);color:var(--cmd-fg);border:1px solid var(--cmd-fg)}
-.btn-cmd:hover{background:#2a1e00;transform:translateY(-1px)}
-
-/* Secondary / Danger */
-.btn-sec{background:transparent;color:var(--text);border:1px solid var(--border)}
-.btn-sec:hover{border-color:var(--text)}
-.btn-del{background:transparent;color:var(--a2);border:1px solid var(--a2)}
-.btn-del:hover{background:rgba(255,61,107,0.08)}
-.btn-prim{background:var(--accent);color:var(--bg);border:none;font-weight:700}
-.btn-prim:hover{background:#33eeff;transform:translateY(-1px)}
-
-.sm{padding:4px 10px;font-size:9px;border-radius:4px}
-
-/* STATS */
-.stats{display:flex;gap:14px;padding:6px 0;margin-bottom:8px;font-size:9px;flex-wrap:wrap}
+.btn[disabled]{opacity:.35;cursor:not-allowed;transform:none!important}
+.bprim{background:var(--accent);color:var(--bg)}.bprim:hover{background:#33eeff}
+.bsec{background:transparent;color:var(--text);border:1px solid var(--border)}.bsec:hover{border-color:var(--text)}
+.bdel{background:transparent;color:var(--a2);border:1px solid var(--a2)}.bdel:hover{background:rgba(255,61,107,.08)}
+.bvid{background:var(--vid-bg);color:var(--vid-c);border:1.5px solid var(--vid-c);box-shadow:0 0 10px rgba(0,229,255,.1)}.bvid:hover{background:#0d2535;box-shadow:0 0 18px rgba(0,229,255,.25)}
+.baud{background:var(--aud-bg);color:var(--aud-c);border:1.5px solid var(--aud-c);box-shadow:0 0 10px rgba(0,230,118,.08)}.baud:hover{background:#0d2c18}
+.bimg{background:var(--img-bg);color:var(--img-c);border:1px solid var(--img-c)}.bimg:hover{background:#1c1435}
+.bweb{background:var(--web-bg);color:var(--web-c);border:1px solid var(--web-c)}.bweb:hover{background:#2a1e00}
+.sm{padding:5px 10px;font-size:9px;border-radius:5px}
+.stats{display:flex;gap:14px;padding:4px 0;font-size:9px;flex-wrap:wrap;margin-bottom:8px}
 .stat{display:flex;align-items:center;gap:4px}
 .dot{width:5px;height:5px;border-radius:50%}
-
-/* TOOLBAR */
-.tb{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
-.tb-sep{width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0}
-.tb-lbl{font-size:8px;color:var(--muted);letter-spacing:1px}
-
-/* VIDEO LIST */
-.vlh{display:flex;align-items:center;gap:8px;padding:7px 11px;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:7px 7px 0 0;font-size:8px;color:var(--muted);letter-spacing:1px}
-.vlist{border:1px solid var(--border);border-top:none;border-radius:0 0 7px 7px;overflow:hidden}
-
-/* VIDEO ITEM */
-.vi{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--card);border-bottom:1px solid var(--border);transition:background .12s;border-left:3px solid transparent}
+.tb{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:10px;padding:8px 10px;background:var(--panel);border:1px solid var(--border);border-radius:8px}
+.ts{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 3px}
+.tl{font-size:8px;color:var(--muted);letter-spacing:1px;flex-shrink:0}
+.vlwrap{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.vlh{display:flex;gap:8px;padding:6px 12px;background:rgba(0,0,0,.5);font-size:8px;color:var(--muted);letter-spacing:1px}
+.vi{display:flex;align-items:center;gap:9px;padding:8px 12px;background:var(--ch);border-bottom:1px solid var(--border);border-left:3px solid transparent;transition:background .12s;animation:fi .14s ease}
 .vi:last-child{border-bottom:none}
-.vi:hover{background:var(--ch)}
-.vi.sel{background:rgba(0,229,255,0.04);border-left-color:var(--accent)}
-.vi.loading{border-left-color:var(--warn)}
+.vi:hover{background:#17172a}
+.vi.sel{background:rgba(0,229,255,.04);border-left-color:var(--accent)}
 .vi.done{border-left-color:var(--green)}
 .vi.error{border-left-color:var(--a2)}
-
-/* CHECKBOX */
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 .ck{flex-shrink:0;cursor:pointer;user-select:none}
 .ck input{display:none}
-.ck-box{width:14px;height:14px;border:1px solid var(--muted);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .15s}
-.ck input:checked+.ck-box{background:var(--accent);border-color:var(--accent);color:var(--bg)}
-
-/* THUMB */
-.vthumb{width:68px;height:43px;border-radius:4px;background:var(--border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;position:relative}
-.vthumb img{width:100%;height:100%;object-fit:cover}
-.vthumb .pov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);font-size:18px}
-.vthumb:hover .pov{display:flex}
-
-/* INFO */
+.ck-b{width:14px;height:14px;border:1.5px solid var(--muted);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .14s}
+.ck input:checked~.ck-b{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.vth{width:68px;height:43px;border-radius:5px;background:var(--border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
+.vth img{width:100%;height:100%;object-fit:cover}
 .vinfo{flex:1;min-width:0;cursor:pointer}
-.vtitle{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Noto Sans SC',sans-serif;margin-bottom:2px}
-.vurl{font-size:8px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.vmeta{display:flex;gap:5px;flex-wrap:wrap}
+.vt{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Noto Sans SC',sans-serif;margin-bottom:2px}
+.vu{font-size:8.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vm{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
 .badge{font-size:7px;padding:1px 5px;border-radius:3px}
 .bbili{background:rgba(0,181,226,.15);color:#00b5e2}
 .bdy{background:rgba(255,61,107,.15);color:var(--a2)}
-.bq{background:rgba(123,97,255,.15);color:var(--a3)}
 .bok{background:rgba(0,230,118,.15);color:var(--green)}
-
-/* ACTION BUTTONS in item */
 .vacts{display:flex;gap:4px;flex-shrink:0}
-
-/* STATUS */
-.vstat{font-size:8px;flex-shrink:0;width:60px;text-align:right;font-family:'Space Mono',monospace}
-.sw{color:var(--muted)}.sl{color:var(--warn)}.sd{color:var(--green)}.se{color:var(--a2)}
-
-/* PROG */
-.pw{height:2px;background:var(--border);border-radius:1px;margin-top:4px;display:none}
-.pb{height:100%;background:var(--accent);border-radius:1px;transition:width .4s}
-.vi.loading .pw{display:block}
-
-/* EMPTY */
-.empty{padding:48px 20px;text-align:center;color:var(--muted);font-family:'Noto Sans SC',sans-serif}
-.empty .ico{font-size:38px;margin-bottom:10px}
-
-/* LOG */
-.logbox{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 11px;font-size:9px;height:100px;overflow-y:auto;margin-top:12px}
-.ll{padding:1px 0;font-family:'Space Mono',monospace}
+.vst{font-size:8px;flex-shrink:0;width:60px;text-align:right}
+.sw{color:var(--muted)}.sd{color:var(--green)}.se{color:var(--a2)}
+.logbox{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:9px;height:88px;overflow-y:auto;margin-top:12px}
+.ll{padding:1px 0;line-height:1.5}
 .li{color:var(--accent)}.lo{color:var(--green)}.le{color:var(--a2)}.lw{color:var(--warn)}
-
-/* MODAL */
-.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;align-items:center;justify-content:center}
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;align-items:center;justify-content:center;padding:12px}
 .mov.open{display:flex}
-.modal{background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:22px;width:600px;max-width:96vw;max-height:92vh;overflow-y:auto}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:22px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto}
 .modal h3{font-size:12px;color:var(--accent);margin-bottom:14px;letter-spacing:1px}
-.mc{float:right;font-size:15px;cursor:pointer;color:var(--muted);background:none;border:none;font-family:'Space Mono',monospace}
+.mc{float:right;font-size:16px;cursor:pointer;color:var(--muted);background:none;border:none;font-family:'Space Mono',monospace}
 .mc:hover{color:var(--text)}
-.modal img{width:100%;border-radius:5px;margin-bottom:12px;border:1px solid var(--border)}
-.minfo{font-size:10px;color:var(--muted);line-height:1.8;font-family:'Noto Sans SC',sans-serif;margin-bottom:12px}
+.mthumb{width:100%;border-radius:7px;margin-bottom:12px;border:1px solid var(--border)}
+.minfo{font-size:11px;color:var(--muted);line-height:1.9;font-family:'Noto Sans SC',sans-serif;margin-bottom:14px}
 .minfo strong{color:var(--text)}
-.macts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-
-/* CMD BOX */
-.cmdbox{display:flex;gap:8px;align-items:flex-start;margin-top:8px}
-.cmdbox textarea{height:60px;font-size:9px;color:var(--green);background:#07100a;border-color:rgba(0,230,118,.3);flex:1;resize:none;font-family:'Space Mono',monospace}
-.cmdbox textarea:focus{border-color:var(--green)}
-
-/* GUIDE */
+.minfo a{color:var(--accent);font-size:9px;word-break:break-all}
+.mdlg{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.mdlb{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:10px;text-decoration:none;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;cursor:pointer;border:none;width:100%;transition:all .14s;line-height:1}
+.mdlb:active{transform:scale(.98)}
+.mico{font-size:22px;flex-shrink:0}
+.mlbl{flex:1;text-align:left}
+.msub{font-size:9px;font-weight:400;opacity:.75;display:block;margin-top:2px;font-family:'Noto Sans SC',sans-serif}
+.marr{opacity:.45;font-size:13px}
+.mv{background:var(--vid-bg);color:var(--vid-c);border:1.5px solid var(--vid-c);box-shadow:0 0 14px rgba(0,229,255,.15)}.mv:hover{background:#0d2a36}
+.ma{background:var(--aud-bg);color:var(--aud-c);border:1.5px solid var(--aud-c);box-shadow:0 0 12px rgba(0,230,118,.12)}.ma:hover{background:#0a2818}
+.mi{background:var(--img-bg);color:var(--img-c);border:1px solid var(--img-c)}.mi:hover{background:#1c1435}
+.ol{font-size:9px;color:var(--muted);letter-spacing:1px;margin:10px 0 6px;font-weight:600}
+.ogd{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ob{display:block;padding:8px 4px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:10px;text-align:center;text-decoration:none;transition:all .13s;font-weight:600;font-family:'Space Mono',monospace}
+.ob:hover,.ob:active{border-color:var(--web-c);color:var(--web-c)}
+.ob small{display:block;font-size:8px;color:var(--muted);font-weight:400;margin-top:1px;font-family:'Noto Sans SC',sans-serif}
+.macts{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .gs{margin-bottom:18px}
-.gs h4{font-size:10px;letter-spacing:1px;margin-bottom:7px;font-family:'Space Mono',monospace}
-.gs p{font-size:12px;color:var(--text);line-height:1.8;font-family:'Noto Sans SC',sans-serif}
-code.blk{display:block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:9px 11px;font-size:9px;color:var(--green);margin:7px 0;line-height:1.8;word-break:break-all;font-family:'Space Mono',monospace;white-space:pre-wrap}
-
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-::-webkit-scrollbar-thumb:hover{background:var(--muted)}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.vi{animation:fadeIn .16s ease}
+.gs h4{font-size:10px;letter-spacing:1px;margin-bottom:7px;color:var(--accent)}
+.gs p{font-size:12px;color:var(--text);line-height:1.9;font-family:'Noto Sans SC',sans-serif}
+code.blk{display:block;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:9px 12px;font-size:9px;color:var(--green);margin:7px 0;line-height:1.8;font-family:'Space Mono',monospace;white-space:pre-wrap;word-break:break-all}
+.empty{padding:48px 20px;text-align:center;color:var(--muted);font-family:'Noto Sans SC',sans-serif}
+.empty .ico{font-size:42px;margin-bottom:10px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;border:1px solid var(--accent);color:var(--accent);padding:8px 18px;border-radius:8px;font-size:11px;z-index:999;transition:transform .25s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@media(max-width:640px){
+  .tab{padding:10px 12px;font-size:9px}
+  .vlh{display:none}
+  .vi{flex-wrap:wrap;gap:7px}
+  .vacts{width:100%;margin-top:4px;gap:5px}
+  .vst{display:none}
+  .hb .pt:not(.pm){display:none}
+  .ogd{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
-<div class="w">
-
-<!-- HEADER -->
 <header>
+<div class="hi">
   <div class="logo">⬇</div>
-  <div>
-    <h1>BILIDOWN</h1>
-    <p>Bilibili &amp; Douyin — yt-dlp Engine</p>
+  <div><div class="ht">BILIDOWN</div><div class="hs">Bilibili &amp; Douyin — PC &amp; Điện thoại</div></div>
+  <div class="hb">
+    <span class="pt pb">BILIBILI</span>
+    <span class="pt pd">DOUYIN</span>
+    <span class="pt pm">📱 MOBILE OK</span>
   </div>
-  <div class="htags">
-    <span class="ptag bili">BILIBILI</span>
-    <span class="ptag dy">DOUYIN</span>
-    <span class="ytdlp-badge">⚙ yt-dlp</span>
-  </div>
+</div>
+<div class="tabbar"><div class="tabs">
+  <button class="tab on" onclick="sw('input')">📥 NHẬP LINK</button>
+  <button class="tab" onclick="sw('queue')">📋 DANH SÁCH <span class="tb2" id="qc">0</span></button>
+  <button class="tab" onclick="sw('guide')">📖 HƯỚNG DẪN</button>
+</div></div>
 </header>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="sw('input')">📥 NHẬP LINK</button>
-  <button class="tab" onclick="sw('queue')">📋 DANH SÁCH <span class="tbadge" id="qc">0</span></button>
-  <button class="tab" onclick="sw('guide')">📖 HƯỚNG DẪN</button>
-</div>
+<div class="w">
 
-<!-- ═══ TAB NHẬP LINK ═══ -->
-<div class="tab-pane active" id="tab-input">
-
-  <div class="info-ytdlp info-box">
-    <b>⚙ yt-dlp Engine — 3 nút tải rõ ràng cho mỗi video:</b><br>
-    <b style="color:var(--vid-fg)">📹 VIDEO+ÂM</b> &nbsp;—&nbsp; Video đầy đủ có âm thanh (mp4)<br>
-    <b style="color:var(--aud-fg)">🎵 CHỈ AUDIO</b> &nbsp;—&nbsp; Chỉ âm thanh (mp3/aac/wav...)<br>
-    <b style="color:var(--img-fg)">🖼 TẢI ẢNH</b> &nbsp;—&nbsp; Thumbnail/ảnh bìa<br>
-    <b style="color:var(--cmd-fg)">📋 LỆNH yt-dlp</b> &nbsp;—&nbsp; Copy lệnh dán vào Terminal để tải
+<!-- TAB NHẬP LINK -->
+<div class="pane on" id="pane-input">
+  <div class="ibox ibg" style="margin-top:14px">
+    <b>📱 Dùng được trên điện thoại!</b> Nhấn nút tải → trang web mở ra đã điền sẵn link → nhấn Download là xong.<br>
+    <b>⚡ Lọc link tự động</b> — Dán text lẫn chữ Trung đều OK: <code>【死亡动画】 https://bilibili.com/...</code>
   </div>
-
-  <div class="info-warn info-box">
-    <b>⚡ Lọc link tự động</b> — Dán text lẫn chữ Trung đều OK:<br>
-    <code style="color:var(--accent)">【冥河第九集 死亡 动画】 https://bilibili.com/video/BV1Ez...</code><br>
-    → Tự lọc: <code style="color:var(--green)">https://bilibili.com/video/BV1Ez...</code>
-  </div>
-
   <div class="card">
-    <span class="clabel">DÁN LINK / TEXT CÓ LINK (mỗi dòng 1 mục)</span>
-    <textarea id="linkin" placeholder="Dán link vào đây, mỗi dòng 1 link:
-【冥河（人诡疑云）第九集 死亡 动画】 https://www.bilibili.com/video/BV1EzGiz1ETU/
-https://www.douyin.com/video/7321234567890
+    <span class="cl">DÁN LINK / TEXT CÓ LINK</span>
+    <textarea id="linkin" placeholder="Dán link vào đây:
+【冥河（人诡疑云）第九集】 https://www.bilibili.com/video/BV1EzGiz1ETU/
+https://v.douyin.com/aBcDeFg/
 https://b23.tv/aBcDe"></textarea>
   </div>
-
   <div class="card">
     <div class="opts">
-      <div class="og"><label>CHẤT LƯỢNG VIDEO</label>
+      <div class="og"><label>CHẤT LƯỢNG</label>
         <select id="qsel">
-          <option value="best">🏆 Cao nhất (Best)</option>
-          <option value="1080">🎬 1080p Full HD</option>
-          <option value="720">📺 720p HD</option>
-          <option value="480">📱 480p</option>
-          <option value="360">💾 360p</option>
+          <option value="bestvideo+bestaudio/best">🏆 Cao nhất</option>
+          <option value="bestvideo[height<=1080]+bestaudio/best[height<=1080]">🎬 1080p</option>
+          <option value="bestvideo[height<=720]+bestaudio/best[height<=720]">📺 720p</option>
+          <option value="bestvideo[height<=480]+bestaudio/best[height<=480]">📱 480p</option>
         </select>
       </div>
       <div class="og"><label>VIDEO FORMAT</label>
         <select id="vfmt"><option>mp4</option><option>mkv</option><option>webm</option></select>
       </div>
       <div class="og"><label>AUDIO FORMAT</label>
-        <select id="afmt"><option>mp3</option><option>aac</option><option>m4a</option><option>opus</option><option>ogg</option><option>wav</option><option>flac</option></select>
-      </div>
-      <div class="og"><label>TÙY CHỌN THÊM</label>
-        <div style="display:flex;gap:14px;align-items:center;padding:4px 0">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:10px">
-            <input type="checkbox" id="opt-thumb" checked style="accent-color:var(--accent)"> Tải Thumbnail
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:10px">
-            <input type="checkbox" id="opt-embed" style="accent-color:var(--accent)"> Nhúng Thumbnail
-          </label>
-        </div>
+        <select id="afmt"><option>mp3</option><option>aac</option><option>m4a</option><option>opus</option><option>wav</option><option>flac</option></select>
       </div>
     </div>
   </div>
-
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-prim" onclick="parseLinks()">🔍 PHÂN TÍCH LINK</button>
-    <button class="btn btn-sec" onclick="document.getElementById('linkin').value=''">🗑 Xóa</button>
+    <button class="btn bprim" onclick="parse()">🔍 PHÂN TÍCH LINK</button>
+    <button class="btn bsec" onclick="document.getElementById('linkin').value=''">🗑 Xóa</button>
   </div>
 </div>
 
-<!-- ═══ TAB DANH SÁCH ═══ -->
-<div class="tab-pane" id="tab-queue">
-  <div class="stats">
-    <span class="stat"><span class="dot" style="background:var(--muted)"></span><span id="st-t">0</span> tổng</span>
-    <span class="stat"><span class="dot" style="background:var(--accent)"></span><span id="st-s">0</span> đã chọn</span>
-    <span class="stat"><span class="dot" style="background:var(--green)"></span><span id="st-d">0</span> xong</span>
-    <span class="stat"><span class="dot" style="background:var(--a2)"></span><span id="st-e">0</span> lỗi</span>
+<!-- TAB DANH SÁCH -->
+<div class="pane" id="pane-queue">
+  <div class="stats" style="margin-top:14px">
+    <span class="stat"><span class="dot" style="background:var(--muted)"></span>Tổng: <b id="st-t">0</b></span>
+    <span class="stat"><span class="dot" style="background:var(--accent)"></span>Chọn: <b id="st-s">0</b></span>
+    <span class="stat"><span class="dot" style="background:var(--green)"></span>Xong: <b id="st-d">0</b></span>
   </div>
-
   <div class="tb">
-    <label class="ck" style="font-size:10px;display:flex;align-items:center;gap:6px;cursor:pointer">
-      <input type="checkbox" id="chkall" onchange="toggleAll(this)">
-      <span class="ck-box" id="allbox">☐</span>
-      <span>Chọn tất cả</span>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:10px">
+      <input type="checkbox" id="chkall" onchange="toggleAll(this)" style="accent-color:var(--accent)"> Chọn tất cả
     </label>
-
-    <div class="tb-sep"></div>
-    <span class="tb-lbl">TẢI CHỌN:</span>
-
-    <!-- 2 nút chính rõ ràng -->
-    <button class="btn btn-vid sm" id="btn-sv" onclick="batchDl('video')" disabled>📹 VIDEO+ÂM</button>
-    <button class="btn btn-aud sm" id="btn-sa" onclick="batchDl('audio')" disabled>🎵 CHỈ AUDIO</button>
-
-    <div class="tb-sep"></div>
-    <span class="tb-lbl">TẤT CẢ:</span>
-    <button class="btn btn-vid sm" onclick="batchAll('video')">📹 VIDEO+ÂM</button>
-    <button class="btn btn-aud sm" onclick="batchAll('audio')">🎵 CHỈ AUDIO</button>
-
-    <div style="flex:1"></div>
-    <button class="btn btn-del sm" onclick="clearQ()">🗑 Xóa hàng đợi</button>
+    <span class="ts"></span>
+    <span class="tl">TẢI CHỌN:</span>
+    <button class="btn bvid sm" id="btn-bv" onclick="batchSel('video')" disabled>📹 VIDEO+ÂM</button>
+    <button class="btn baud sm" id="btn-ba" onclick="batchSel('audio')" disabled>🎵 CHỈ AUDIO</button>
+    <span class="ts"></span>
+    <span class="tl">TẤT CẢ:</span>
+    <button class="btn bvid sm" onclick="batchAll('video')">📹 VIDEO+ÂM</button>
+    <button class="btn baud sm" onclick="batchAll('audio')">🎵 CHỈ AUDIO</button>
+    <span style="flex:1"></span>
+    <button class="btn bdel sm" onclick="clearQ()">🗑 Xóa</button>
   </div>
-
   <div id="vwrap">
-    <div class="empty"><div class="ico">📭</div><p>Chưa có link nào — nhập link ở tab NHẬP LINK</p></div>
+    <div class="empty"><div class="ico">📭</div><p>Chưa có link — nhập ở tab NHẬP LINK</p></div>
   </div>
-
   <div class="logbox" id="logbox"></div>
 </div>
 
-<!-- ═══ TAB HƯỚNG DẪN ═══ -->
-<div class="tab-pane" id="tab-guide">
-  <div class="card" style="line-height:1.9">
-
-    <div class="gs">
-      <h4 style="color:var(--accent)">① CÀI ĐẶT yt-dlp</h4>
-      <code class="blk">pip install yt-dlp</code>
-      <p>Hoặc tải binary: <a href="https://github.com/yt-dlp/yt-dlp/releases" target="_blank" style="color:var(--accent)">github.com/yt-dlp/yt-dlp/releases</a></p>
+<!-- TAB HƯỚNG DẪN -->
+<div class="pane" id="pane-guide">
+  <div class="card" style="margin-top:14px;line-height:1.9">
+    <div class="gs"><h4>① ĐIỆN THOẠI — cách tải</h4>
+      <p>1. Dán link → nhấn <b>Phân Tích Link</b><br>
+      2. Nhấn <b style="color:var(--vid-c)">📹 VIDEO+ÂM</b> hoặc <b style="color:var(--aud-c)">🎵 CHỈ AUDIO</b><br>
+      3. Trang tải mở ra → nhấn <b>Download</b> → xong<br>
+      4. Nếu 1 trang lỗi → nhấn <b>🌐 Trang khác</b> trong popup</p>
     </div>
+    <div class="gs"><h4>② MÁY TÍNH — yt-dlp (mạnh hơn)</h4>
+      <code class="blk"># Cài:
+pip install yt-dlp
 
-    <div class="gs">
-      <h4 style="color:var(--vid-fg)">② 📹 VIDEO+ÂM — Lệnh yt-dlp</h4>
-      <code class="blk"># Video 1080p có âm thanh + thumbnail:
-yt-dlp -f "bestvideo[height&lt;=1080]+bestaudio" --merge-output-format mp4 --write-thumbnail -o "%(title)s.%(ext)s" [URL]
+# Video 1080p có âm thanh:
+yt-dlp -f "bestvideo[height&lt;=1080]+bestaudio" --merge-output-format mp4 [URL]
 
-# Video chất lượng cao nhất:
-yt-dlp -f "bestvideo+bestaudio" --merge-output-format mp4 -o "%(title)s.%(ext)s" [URL]</code>
+# Douyin cần cookie Chrome (đăng nhập Chrome trước):
+yt-dlp --cookies-from-browser chrome [URL]
+
+# Chỉ audio MP3:
+yt-dlp -x --audio-format mp3 [URL]</code>
     </div>
-
-    <div class="gs">
-      <h4 style="color:var(--aud-fg)">③ 🎵 CHỈ AUDIO — Lệnh yt-dlp</h4>
-      <code class="blk"># Chỉ âm thanh MP3:
-yt-dlp -x --audio-format mp3 --audio-quality 0 -o "%(title)s.%(ext)s" [URL]
-
-# Âm thanh chất lượng cao nhất (không convert):
-yt-dlp -x -o "%(title)s.%(ext)s" [URL]</code>
-    </div>
-
-    <div class="gs">
-      <h4 style="color:var(--warn)">④ TẢI HÀNG LOẠT</h4>
-      <code class="blk"># Tạo file links.txt, mỗi dòng 1 URL, rồi chạy:
-yt-dlp -f "bestvideo+bestaudio" --merge-output-format mp4 -a links.txt --write-thumbnail -o "%(title)s.%(ext)s"</code>
-    </div>
-
-    <div class="gs">
-      <h4 style="color:var(--muted)">⑤ GHI CHÚ</h4>
-      <p>• Bilibili public: không cần đăng nhập<br>
-      • Douyin: một số video cần: <code style="color:var(--accent)">--cookies-from-browser chrome</code><br>
-      • b23.tv là link rút gọn Bilibili, yt-dlp tự xử lý<br>
-      • Tool này <strong style="color:var(--vid-fg)">tạo lệnh yt-dlp</strong> sẵn — copy dán vào terminal là tải được</p>
+    <div class="gs"><h4>③ CÁC TRANG TẢI VIDEO (6 trang dự phòng)</h4>
+      <p>🥜 PeanutDL &nbsp;|&nbsp; 📸 SnapVideoTools &nbsp;|&nbsp; 🔍 Seekin.ai<br>💾 SaveTube &nbsp;|&nbsp; ⬇ SSSTik &nbsp;|&nbsp; 📺 bilibili.ovh</p>
     </div>
   </div>
 </div>
 
-</div><!-- /w -->
+</div>
 
 <!-- MODAL -->
 <div class="mov" id="mov">
-  <div class="modal">
-    <button class="mc" onclick="closeMod()">✕</button>
-    <h3 id="mtitle">CHI TIẾT</h3>
-    <img id="mthumb" src="" alt="" style="display:none" onerror="this.style.display='none'">
-    <div class="minfo" id="minfo"></div>
-    <div class="macts" id="macts"></div>
-  </div>
+<div class="modal">
+  <button class="mc" onclick="closeMod()">✕</button>
+  <h3 id="mtitle">⬇ TẢI VIDEO</h3>
+  <img id="mthumb" src="" alt="" style="display:none" onerror="this.style.display='none'">
+  <div class="minfo" id="minfo"></div>
+  <div class="mdlg" id="mdlg"></div>
+  <div class="ol" id="ol" style="display:none">🌐 TRANG KHÁC — nếu trang trên lỗi</div>
+  <div class="ogd" id="ogd"></div>
+  <div class="macts" id="macts"></div>
+</div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-/* ═══════════════════════════════
-   STATE
-═══════════════════════════════ */
 const URL_RE=/https?:\/\/(?:(?:www\.)?bilibili\.com\/video\/[A-Za-z0-9_/?=&%#.\-]+|b23\.tv\/[A-Za-z0-9]+|(?:www\.)?douyin\.com\/video\/\d+|v\.douyin\.com\/[A-Za-z0-9]+|vm\.tiktok\.com\/[A-Za-z0-9]+)[^\s\u4e00-\u9fff"'<>]*/g;
-let Q=[],SEL=new Set();
-
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function getPlatform(u){return(u.includes('bilibili.com')||u.includes('b23.tv'))?'bilibili':'douyin'}
-function getSid(u){const m=u.match(/\/(BV[A-Za-z0-9]+)/)||u.match(/\/video\/(\d+)/);return m?m[1]:u.slice(-10)}
-
-/* ═══════════════════════════════
-   QUALITY MAP
-═══════════════════════════════ */
-const QMAP={
-  best:'bestvideo+bestaudio/best',
-  '1080':'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
-  '720':'bestvideo[height<=720]+bestaudio/best[height<=720]',
-  '480':'bestvideo[height<=480]+bestaudio/best[height<=480]',
-  '360':'bestvideo[height<=360]+bestaudio/best[height<=360]',
-};
-
-/* ═══════════════════════════════
-   BUILD COMMANDS
-═══════════════════════════════ */
-function buildCmd(v, type){
-  const q=document.getElementById('qsel').value;
-  const vf=document.getElementById('vfmt').value;
-  const af=document.getElementById('afmt').value;
-  const thumb=document.getElementById('opt-thumb').checked;
-  const embed=document.getElementById('opt-embed').checked;
-  const fmt=QMAP[q]||'bestvideo+bestaudio/best';
-  const out='-o "%(title)s.%(ext)s"';
-
-  if(type==='audio'){
-    return `yt-dlp -x --audio-format ${af} --audio-quality 0 ${out} "${v.url}"`;
-  } else {
-    let cmd=`yt-dlp -f "${fmt}" --merge-output-format ${vf}`;
-    if(thumb) cmd+=' --write-thumbnail';
-    if(embed)  cmd+=' --embed-thumbnail';
-    cmd+=` ${out} "${v.url}"`;
-    return cmd;
-  }
-}
-
-/* ═══════════════════════════════
-   PARSE LINKS
-═══════════════════════════════ */
-function parseLinks(){
+const SITES=[
+  {n:'🥜 PeanutDL',d:'Bili+Douyin',bili:u=>`https://peanutdl.com/en/bilibili?url=${E(u)}`,dy:u=>`https://peanutdl.com/en/douyin?url=${E(u)}`},
+  {n:'📸 SnapVideo',d:'Đa nền tảng',bili:u=>`https://snapvideotools.com/?url=${E(u)}`,dy:u=>`https://snapvideotools.com/?url=${E(u)}`},
+  {n:'🔍 Seekin.ai',d:'Bili+Douyin',bili:u=>`https://www.seekin.ai/bilibili-downloader/?url=${E(u)}`,dy:u=>`https://www.seekin.ai/douyin-downloader/?url=${E(u)}`},
+  {n:'💾 SaveTube',d:'Đa nền tảng',bili:u=>`https://savetube.me/?url=${E(u)}`,dy:u=>`https://savetube.me/?url=${E(u)}`},
+  {n:'⬇ SSSTik',d:'Douyin/TikTok',bili:u=>`https://snapvideotools.com/?url=${E(u)}`,dy:u=>`https://ssstik.io/?url=${E(u)}`},
+  {n:'📺 bilibili.ovh',d:'Bilibili',bili:u=>`https://bilibili.ovh/?url=${E(u)}`,dy:u=>`https://snapvideotools.com/?url=${E(u)}`},
+];
+function E(u){return encodeURIComponent(u)}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function plat(u){return(u.includes('bilibili.com')||u.includes('b23.tv'))?'bilibili':'douyin'}
+function sid(u){const m=u.match(/\/(BV[A-Za-z0-9]+)/)||u.match(/\/video\/(\d+)/);return m?m[1]:u.slice(-9)}
+function su(s,url,p){return p==='bilibili'?s.bili(url):s.dy(url)}
+let items=[],sel=new Set();
+function parse(){
   const raw=document.getElementById('linkin').value.trim();
-  if(!raw){log('w','Chưa nhập link');return}
+  if(!raw){toast('Chưa nhập link!');return}
   const urls=(raw.match(URL_RE)||[]).map(u=>u.replace(/[.,!?;，。！？；\])}]+$/,'')).filter((u,i,a)=>a.indexOf(u)===i);
-  if(!urls.length){log('e','Không tìm thấy URL Bilibili/Douyin hợp lệ');return}
-  const exist=new Set(Q.map(v=>v.url));
-  let added=0;
-  const q=document.getElementById('qsel').value;
+  if(!urls.length){log('e','Không tìm thấy URL hợp lệ');toast('Không có link Bilibili/Douyin!');return}
+  const ex=new Set(items.map(v=>v.url));let added=0;
   urls.forEach(url=>{
-    if(exist.has(url)){log('w','Đã tồn tại: '+url.slice(0,55));return}
-    const id='v'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
-    const plat=getPlatform(url),sid=getSid(url);
-    Q.push({id,url,plat,sid,title:`[${plat.toUpperCase()}] ${sid}`,status:'wait',thumb:null,quality:q,progress:0});
-    exist.add(url);added++;
+    if(ex.has(url)){log('w','Đã có: '+url.slice(0,50));return}
+    const p=plat(url);
+    const it={url,plat:p,sid:sid(url),title:'['+p.toUpperCase()+'] '+sid(url),thumb:null,status:'wait'};
+    items.push(it);ex.add(url);added++;
+    fetch('https://noembed.com/embed?url='+E(url),{signal:AbortSignal.timeout(8000)})
+      .then(r=>r.json()).then(d=>{let c=false;if(d.title&&d.title!='undefined'){it.title=d.title;c=true}if(d.thumbnail_url){it.thumb=d.thumbnail_url;c=true}if(c)render();}).catch(()=>{});
   });
-  log('i',`Tìm ${urls.length} link, thêm ${added} mục`);
-  renderList();sw('queue');
-  Q.filter(v=>v.title.startsWith('[')).forEach(v=>fetchMeta(v));
+  log('i','Tìm '+urls.length+' link, thêm '+added+' mục');render();sw('queue');toast('Thêm '+added+' video ✓');
 }
-
-/* ═══════════════════════════════
-   META (noembed)
-═══════════════════════════════ */
-function fetchMeta(item){
-  fetch(`https://noembed.com/embed?url=${encodeURIComponent(item.url)}`,{signal:AbortSignal.timeout(8000)})
-    .then(r=>r.json()).then(d=>{
-      if(d.title&&d.title!='undefined')item.title=d.title;
-      if(d.thumbnail_url)item.thumb=d.thumbnail_url;
-      refreshItem(item.id);
-    }).catch(()=>{});
+function render(){
+  const el=document.getElementById('vwrap');upSt();
+  if(!items.length){el.innerHTML='<div class="empty"><div class="ico">📭</div><p>Chưa có link — nhập ở tab NHẬP LINK</p></div>';return}
+  el.innerHTML='<div class="vlwrap"><div class="vlh"><span style="width:20px">☑</span><span style="width:72px">THUMB</span><span style="width:80px">PLATFORM</span><span style="flex:1">TÊN VIDEO / URL</span><span style="width:240px;text-align:right">THAO TÁC</span></div>'+items.map(makeRow).join('')+'</div>';
 }
-
-/* ═══════════════════════════════
-   RENDER
-═══════════════════════════════ */
-function renderList(){
-  const w=document.getElementById('vwrap');
-  if(!Q.length){
-    w.innerHTML='<div class="empty"><div class="ico">📭</div><p>Chưa có link nào</p></div>';
-    updateStats();return;
-  }
-  w.innerHTML=`<div class="vlh">
-    <span style="width:20px">☑</span>
-    <span style="width:70px">THUMB</span>
-    <span style="width:72px">NỀN TẢNG</span>
-    <span style="flex:1">TÊN VIDEO</span>
-    <span style="width:260px;text-align:right">THAO TÁC</span>
-  </div><div class="vlist" id="vlist"></div>`;
-  Q.forEach(v=>document.getElementById('vlist').appendChild(makeItem(v)));
-  updateStats();
+function makeRow(v,i){
+  const th=v.thumb?`<img src="${esc(v.thumb)}" loading="lazy" onerror="this.parentElement.innerHTML='${v.plat==='bilibili'?'📺':'📱'}'">`:(v.plat==='bilibili'?'📺':'📱');
+  const chk=sel.has(i);
+  const sc=v.status==='done'?'done':v.status==='error'?'error':'';
+  const stxt=v.status==='done'?'<span class="vst sd">✓XONG</span>':'<span class="vst sw">CHỜTẢI</span>';
+  const s0=su(SITES[0],v.url,v.plat),s1=su(SITES[1],v.url,v.plat);
+  return `<div class="vi ${sc} ${chk?'sel':''}" id="vi${i}">
+  <label class="ck" onclick="event.stopPropagation()"><input type="checkbox" ${chk?'checked':''} onchange="togVI(${i},this.checked)"><span class="ck-b">${chk?'✓':'☐'}</span></label>
+  <div class="vth" onclick="showMod(${i})">${th}</div>
+  <div style="width:80px;flex-shrink:0"><span class="badge ${v.plat==='bilibili'?'bbili':'bdy'}">${v.plat.toUpperCase()}</span></div>
+  <div class="vinfo" onclick="showMod(${i})">
+    <div class="vt">${esc(v.title)}</div>
+    <div class="vu">${esc(v.url)}</div>
+    <div class="vm">${v.status==='done'?'<span class="badge bok">✓XONG</span>':''}</div>
+  </div>
+  <div class="vacts">
+    <a class="btn bvid sm" href="${esc(s0)}" target="_blank" rel="noopener" onclick="markDone(${i});log('o','Mở trang VIDEO+ÂM...')">📹 VIDEO+ÂM</a>
+    <a class="btn baud sm" href="${esc(s1)}" target="_blank" rel="noopener" onclick="markDone(${i});log('o','Mở trang AUDIO...')">🎵 AUDIO</a>
+    <button class="btn bweb sm" onclick="event.stopPropagation();showMod(${i})">🌐 Trang khác</button>
+    <button class="btn bdel sm" onclick="event.stopPropagation();removeItem(${i})">✕</button>
+  </div>
+  ${stxt}
+</div>`;
 }
-
-function makeItem(v){
-  const el=document.createElement('div');
-  const sc={wait:'',loading:'loading',done:'done',error:'error'}[v.status]||'';
-  el.className=`vi ${sc} ${SEL.has(v.id)?'sel':''}`;
-  el.id=`vi_${v.id}`;
-  const th=v.thumb
-    ?`<img src="${esc(v.thumb)}" alt="" onerror="this.parentElement.innerHTML='📺'"><div class="pov">▶</div>`
-    :(v.plat==='bilibili'?'📺':'📱');
-  const st={wait:'<span class="vstat sw">CHỜTẢI</span>',loading:'<span class="vstat sl">⬇TẢI</span>',done:'<span class="vstat sd">✓XONG</span>',error:'<span class="vstat se">✗LỖI</span>'}[v.status]||'';
-
-  el.innerHTML=`
-    <label class="ck" onclick="event.stopPropagation()">
-      <input type="checkbox" ${SEL.has(v.id)?'checked':''} onchange="togVI('${v.id}',this.checked)">
-      <span class="ck-box">${SEL.has(v.id)?'✓':'☐'}</span>
-    </label>
-    <div class="vthumb" onclick="showDet('${v.id}')">${th}</div>
-    <div style="width:72px;flex-shrink:0"><span class="badge ${v.plat==='bilibili'?'bbili':'bdy'}">${v.plat.toUpperCase()}</span></div>
-    <div class="vinfo" onclick="showDet('${v.id}')">
-      <div class="vtitle">${esc(v.title)}</div>
-      <div class="vurl">${esc(v.url)}</div>
-      <div class="vmeta">
-        <span class="badge bq">${v.quality==='best'?'BEST':v.quality+'p'}</span>
-        ${v.status==='done'?'<span class="badge bok">✓XONG</span>':''}
-      </div>
-      <div class="pw"><div class="pb" id="pb_${v.id}" style="width:${v.progress}%"></div></div>
-    </div>
-    <div class="vacts">
-      <button class="btn btn-vid sm" onclick="event.stopPropagation();doOne('${v.id}','video')" title="Tải video có âm thanh">📹 VIDEO+ÂM</button>
-      <button class="btn btn-aud sm" onclick="event.stopPropagation();doOne('${v.id}','audio')" title="Tải chỉ âm thanh">🎵 CHỈ AUDIO</button>
-      <button class="btn btn-img sm" onclick="event.stopPropagation();dlThumb('${v.id}')" title="Tải thumbnail" ${!v.thumb?'disabled':''}>🖼</button>
-      <button class="btn btn-cmd sm" onclick="event.stopPropagation();showCmd('${v.id}')" title="Xem lệnh yt-dlp">📋</button>
-    </div>
-    ${st}`;
-  return el;
-}
-
-function refreshItem(id){
-  const v=Q.find(x=>x.id===id);if(!v)return;
-  const el=document.getElementById(`vi_${id}`);if(!el)return;
-  el.replaceWith(makeItem(v));updateStats();
-}
-
-/* ═══════════════════════════════
-   SELECT
-═══════════════════════════════ */
-function togVI(id,c){
-  c?SEL.add(id):SEL.delete(id);
-  const el=document.getElementById(`vi_${id}`);
-  if(el){el.classList.toggle('sel',c);const b=el.querySelector('.ck-box');if(b)b.textContent=c?'✓':'☐'}
-  updateStats();updSelBtns();
-}
-function toggleAll(cb){
-  cb.checked?Q.forEach(v=>SEL.add(v.id)):SEL.clear();
-  document.getElementById('allbox').textContent=cb.checked?'✓':'☐';
-  Q.forEach(v=>{const el=document.getElementById(`vi_${v.id}`);if(el){el.classList.toggle('sel',cb.checked);const b=el.querySelector('.ck-box');if(b)b.textContent=cb.checked?'✓':'☐';const i=el.querySelector('input[type=checkbox]');if(i)i.checked=cb.checked}});
-  updateStats();updSelBtns();
-}
-function updSelBtns(){
-  const d=SEL.size===0;
-  document.getElementById('btn-sv').disabled=d;
-  document.getElementById('btn-sa').disabled=d;
-}
-function updateStats(){
-  document.getElementById('st-t').textContent=Q.length;
-  document.getElementById('st-s').textContent=SEL.size;
-  document.getElementById('st-d').textContent=Q.filter(v=>v.status==='done').length;
-  document.getElementById('st-e').textContent=Q.filter(v=>v.status==='error').length;
-  document.getElementById('qc').textContent=Q.length;
-}
-
-/* ═══════════════════════════════
-   SHOW CMD MODAL
-═══════════════════════════════ */
-function showCmd(id){
-  const v=Q.find(x=>x.id===id);if(!v)return;
-  const cmdV=buildCmd(v,'video');
-  const cmdA=buildCmd(v,'audio');
-  document.getElementById('mtitle').textContent='📋 LỆNH YT-DLP — '+v.title.slice(0,50);
-  const th=document.getElementById('mthumb');
-  if(v.thumb){th.src=v.thumb;th.style.display='block';}else th.style.display='none';
-  document.getElementById('minfo').innerHTML=`
-    <strong>URL:</strong> <a href="${esc(v.url)}" target="_blank" style="color:var(--accent);font-size:9px;word-break:break-all">${esc(v.url)}</a><br><br>
-    <strong style="color:var(--vid-fg)">📹 VIDEO+ÂM:</strong>
-    <div class="cmdbox"><textarea readonly onclick="this.select()">${esc(cmdV)}</textarea>
-    <button class="btn btn-vid sm" onclick="copyText('${esc(cmdV).replace(/'/g,"\\'")}','video')">📋 Copy</button></div>
-    <br><strong style="color:var(--aud-fg)">🎵 CHỈ AUDIO:</strong>
-    <div class="cmdbox"><textarea readonly onclick="this.select()">${esc(cmdA)}</textarea>
-    <button class="btn btn-aud sm" onclick="copyText('${esc(cmdA).replace(/'/g,"\\'")}','audio')">📋 Copy</button></div>
-    <br><div style="font-size:9px;color:var(--muted)">
-      💡 <strong>Copy lệnh → mở Terminal/CMD → dán → Enter</strong> để tải về máy.<br>
-      Chưa có yt-dlp? Chạy: <code style="color:var(--accent)">pip install yt-dlp</code>
-    </div>`;
-  document.getElementById('macts').innerHTML=`
-    <button class="btn btn-sec sm" onclick="navigator.clipboard?.writeText('${esc(v.url).replace(/'/g,"\\'")}');log('o','Đã copy URL!')">🔗 Copy URL</button>
-    <button class="btn btn-sec sm" onclick="closeMod()">Đóng</button>`;
+function togVI(i,c){c?sel.add(i):sel.delete(i);const el=document.getElementById('vi'+i);if(el){el.classList.toggle('sel',c);const b=el.querySelector('.ck-b');if(b)b.textContent=c?'✓':'☐'}upSt();updBtns()}
+function toggleAll(cb){cb.checked?items.forEach((_,i)=>sel.add(i)):sel.clear();items.forEach((_,i)=>{const el=document.getElementById('vi'+i);if(!el)return;el.classList.toggle('sel',cb.checked);const b=el.querySelector('.ck-b');if(b)b.textContent=cb.checked?'✓':'☐';const ck=el.querySelector('input[type=checkbox]');if(ck)ck.checked=cb.checked});upSt();updBtns()}
+function updBtns(){const d=sel.size===0;document.getElementById('btn-bv').disabled=d;document.getElementById('btn-ba').disabled=d}
+function upSt(){document.getElementById('qc').textContent=items.length;document.getElementById('st-t').textContent=items.length;document.getElementById('st-s').textContent=sel.size;document.getElementById('st-d').textContent=items.filter(v=>v.status==='done').length}
+function batchSel(type){[...sel].forEach(i=>{const v=items[i];if(!v)return;window.open(su(type==='video'?SITES[0]:SITES[1],v.url,v.plat),'_blank');markDone(i)});log('o','Đã mở '+sel.size+' trang tải')}
+function batchAll(type){items.forEach((v,i)=>{window.open(su(type==='video'?SITES[0]:SITES[1],v.url,v.plat),'_blank');markDone(i)});log('o','Đã mở '+items.length+' trang tải')}
+function showMod(i){
+  const v=items[i];if(!v)return;
+  const p=v.plat;
+  document.getElementById('mtitle').textContent='⬇ TẢI VIDEO';
+  const th=document.getElementById('mthumb');th.style.display=v.thumb?'block':'none';if(v.thumb)th.src=v.thumb;
+  document.getElementById('minfo').innerHTML=`<strong>Tên:</strong> ${esc(v.title)}<br><strong>Platform:</strong> ${p.toUpperCase()}<br><strong>URL:</strong> <a href="${esc(v.url)}" target="_blank">${esc(v.url)}</a>`;
+  document.getElementById('mdlg').innerHTML=`
+    <a class="mdlb mv" href="${esc(su(SITES[0],v.url,p))}" target="_blank" rel="noopener" onclick="markDone(${i});log('o','Mở trang VIDEO+ÂM...')">
+      <span class="mico">📹</span><span class="mlbl">TẢI VIDEO + ÂM THANH<span class="msub">qua ${SITES[0].n} — Nhấn vào rồi nhấn Download</span></span><span class="marr">›</span>
+    </a>
+    <a class="mdlb ma" href="${esc(su(SITES[1],v.url,p))}" target="_blank" rel="noopener" onclick="markDone(${i});log('o','Mở trang AUDIO...')">
+      <span class="mico">🎵</span><span class="mlbl">TẢI AUDIO (MP3)<span class="msub">qua ${SITES[1].n}</span></span><span class="marr">›</span>
+    </a>
+    ${v.thumb?`<a class="mdlb mi" href="${esc(v.thumb)}" download target="_blank"><span class="mico">🖼</span><span class="mlbl">TẢI ẢNH THUMBNAIL<span class="msub">Ảnh bìa video</span></span><span class="marr">›</span></a>`:''}`;
+  document.getElementById('ol').style.display='';
+  document.getElementById('ogd').innerHTML=SITES.map(s=>`<a class="ob" href="${esc(su(s,v.url,p))}" target="_blank" rel="noopener" onclick="markDone(${i})">${s.n}<small>${s.d}</small></a>`).join('');
+  document.getElementById('macts').innerHTML=`<button class="btn bsec sm" onclick="navigator.clipboard?.writeText('${esc(v.url).replace(/'/g,"\\'")}');toast('Đã copy URL!')">🔗 Copy URL</button><button class="btn bsec sm" onclick="closeMod()">Đóng</button>`;
   document.getElementById('mov').classList.add('open');
 }
-
-function copyText(cmd,type){
-  const raw=cmd.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
-  navigator.clipboard?.writeText(raw).then(()=>log('o',`Đã copy lệnh ${type==='video'?'VIDEO+ÂM':'CHỈ AUDIO'}! Dán vào Terminal để tải.`));
-}
-
-/* ═══════════════════════════════
-   DETAIL MODAL
-═══════════════════════════════ */
-function showDet(id){
-  const v=Q.find(x=>x.id===id);if(!v)return;
-  const cmdV=buildCmd(v,'video');
-  const cmdA=buildCmd(v,'audio');
-  document.getElementById('mtitle').textContent='📹 CHI TIẾT VIDEO';
-  const th=document.getElementById('mthumb');
-  if(v.thumb){th.src=v.thumb;th.style.display='block';}else th.style.display='none';
-  document.getElementById('minfo').innerHTML=`
-    <strong>Tên:</strong> ${esc(v.title)}<br>
-    <strong>Platform:</strong> ${v.plat.toUpperCase()}<br>
-    <strong>ID:</strong> ${v.sid}<br>
-    <strong>Chất lượng:</strong> ${v.quality==='best'?'Cao nhất':v.quality+'p'}<br>
-    <strong>URL:</strong><br>
-    <a href="${esc(v.url)}" target="_blank" style="color:var(--accent);font-size:9px;word-break:break-all">${esc(v.url)}</a>`;
-  document.getElementById('macts').innerHTML=`
-    <button class="btn btn-vid" onclick="copyText('${esc(cmdV).replace(/'/g,"\\'")}','video');doOne('${id}','video');closeMod()">📹 VIDEO+ÂM (copy lệnh)</button>
-    <button class="btn btn-aud" onclick="copyText('${esc(cmdA).replace(/'/g,"\\'")}','audio');doOne('${id}','audio');closeMod()">🎵 CHỈ AUDIO (copy lệnh)</button>
-    ${v.thumb?`<button class="btn btn-img" onclick="dlThumb('${id}');closeMod()">🖼 TẢI ẢNH</button>`:''}
-    <button class="btn btn-sec sm" onclick="closeMod()">Đóng</button>`;
-  document.getElementById('mov').classList.add('open');
-}
-
-/* ═══════════════════════════════
-   DO ONE — copy cmd + mark status
-═══════════════════════════════ */
-function doOne(id, type){
-  const v=Q.find(x=>x.id===id);if(!v)return;
-  const cmd=buildCmd(v,type);
-  const typeLabel=type==='video'?'VIDEO+ÂM':'CHỈ AUDIO';
-  // Copy lệnh vào clipboard
-  navigator.clipboard?.writeText(cmd).then(()=>{
-    log('o',`Đã copy lệnh ${typeLabel}! Dán vào Terminal để tải.`);
-  }).catch(()=>{
-    log('w','Không copy được tự động, hãy nhấn 📋 để copy thủ công.');
-  });
-  v.status='done';v.progress=100;
-  refreshItem(id);
-  log('i',`[${typeLabel}] ${v.title.slice(0,50)}`);
-  log('i',`CMD: ${cmd.slice(0,100)}...`);
-}
-
-/* ═══════════════════════════════
-   BATCH
-═══════════════════════════════ */
-function batchDl(type){
-  const ids=[...SEL];if(!ids.length)return;
-  const cmds=ids.map(id=>{const v=Q.find(x=>x.id===id);return v?buildCmd(v,type):null}).filter(Boolean);
-  const allCmd=cmds.join('\n');
-  showBatchModal(allCmd, ids.length, type);
-  ids.forEach(id=>{const v=Q.find(x=>x.id===id);if(v){v.status='done';refreshItem(id);}});
-}
-
-function batchAll(type){
-  if(!Q.length)return;
-  const cmds=Q.map(v=>buildCmd(v,type));
-  const allCmd=cmds.join('\n');
-  showBatchModal(allCmd, Q.length, type);
-  Q.forEach(v=>{v.status='done';refreshItem(v.id);});
-}
-
-function showBatchModal(allCmd, count, type){
-  const typeLabel=type==='video'?'VIDEO+ÂM':'CHỈ AUDIO';
-  document.getElementById('mtitle').textContent=`📦 BATCH LỆNH ${typeLabel} (${count} video)`;
-  document.getElementById('mthumb').style.display='none';
-  document.getElementById('minfo').innerHTML=`
-    <strong>${count} lệnh yt-dlp (${typeLabel}):</strong>
-    <div class="cmdbox" style="margin-top:8px">
-      <textarea readonly style="height:160px" onclick="this.select()">${esc(allCmd)}</textarea>
-    </div>
-    <br><div style="font-size:9px;color:var(--muted)">
-      Hoặc tạo <code style="color:var(--accent)">links.txt</code> rồi chạy:<br>
-      <code style="color:var(--green)">yt-dlp ${type==='audio'?'-x --audio-format mp3':'-f "bestvideo+bestaudio" --merge-output-format mp4'} --write-thumbnail -a links.txt -o "%(title)s.%(ext)s"</code>
-    </div>`;
-  document.getElementById('macts').innerHTML=`
-    <button class="btn ${type==='video'?'btn-vid':'btn-aud'}" onclick="navigator.clipboard?.writeText(${JSON.stringify(allCmd)});log('o','Đã copy tất cả ${count} lệnh!')">📋 Copy tất cả lệnh</button>
-    <button class="btn btn-sec sm" onclick="closeMod()">Đóng</button>`;
-  document.getElementById('mov').classList.add('open');
-}
-
-/* ═══════════════════════════════
-   THUMBNAIL
-═══════════════════════════════ */
-function dlThumb(id){
-  const v=Q.find(x=>x.id===id);if(!v||!v.thumb){log('w','Chưa có thumbnail');return}
-  const fname=`${v.sid}_thumb.jpg`;
-  fetch(v.thumb,{signal:AbortSignal.timeout(15000)})
-    .then(r=>r.blob()).then(blob=>{
-      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-      log('o',`✓ Đã tải ảnh: ${fname}`);
-    }).catch(()=>{
-      const a=document.createElement('a');a.href=v.thumb;a.target='_blank';a.click();
-      log('o','Mở ảnh trong tab mới');
-    });
-}
-
-/* ═══════════════════════════════
-   MISC
-═══════════════════════════════ */
-function clearQ(){if(!Q.length)return;Q=[];SEL.clear();renderList();log('w','Đã xóa hàng đợi')}
 function closeMod(){document.getElementById('mov').classList.remove('open')}
 document.getElementById('mov').addEventListener('click',e=>{if(e.target===document.getElementById('mov'))closeMod()});
-
-function log(type,msg){
-  const b=document.getElementById('logbox');if(!b)return;
-  const d=document.createElement('div');d.className='ll l'+type;
-  d.textContent=`[${new Date().toLocaleTimeString('vi-VN')}] ${msg}`;
-  b.appendChild(d);b.scrollTop=b.scrollHeight;
-}
-
-function sw(name){
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  const m={input:0,queue:1,guide:2};
-  document.querySelectorAll('.tab')[m[name]].classList.add('active');
-}
-
-window.addEventListener('load',()=>{
-  log('i','BiliDown sẵn sàng ⚙ yt-dlp Engine — Nhập link và nhấn Phân Tích Link');
-});
+function markDone(i){if(items[i]){items[i].status='done';render()}}
+function removeItem(i){items.splice(i,1);sel.clear();render();log('w','Đã xóa')}
+function clearQ(){items=[];sel.clear();render();log('w','Đã xóa hàng đợi')}
+function log(type,msg){const b=document.getElementById('logbox');const d=document.createElement('div');d.className='ll l'+type;d.textContent='['+new Date().toLocaleTimeString('vi-VN')+'] '+msg;b.appendChild(d);b.scrollTop=b.scrollHeight}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function sw(name){document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('pane-'+name).classList.add('on');const m={input:0,queue:1,guide:2};document.querySelectorAll('.tab')[m[name]].classList.add('on')}
+window.onload=()=>log('i','BiliDown sẵn sàng — Dán link và nhấn Phân Tích Link 📱');
 </script>
 </body>
 </html>
